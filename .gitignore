@@ -80,3 +80,8 @@ app_nanos.json
 Dockerfile
 docker-compose.yml
 entrypoint.sh
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
