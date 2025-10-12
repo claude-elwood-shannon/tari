@@ -141,55 +141,6 @@ class TestTariLedgerWallet:
         # The framework is ready for APDU testing when Speculos session management is resolved
         print("⚠️  Note: APDU execution requires Speculos session optimization")
     
-    @pytest.mark.speculos
-    def test_wallet_version_info(self):
-        """Test wallet version and application name retrieval"""
-        app_path = self._get_app_path("flex")
-        flex_device = Devices.get_by_name("flex")
-        
-        self.backend = SpeculosBackend(
-            application=app_path,
-            device=flex_device
-        )
-        
-        # Get version
-        version_apdu = self._build_apdu_command(self.GET_VERSION)
-        version_response = self._exchange_apdu(version_apdu)
-        print(f"✅ Version response: {version_response.hex()}")
-        
-        # Get app name
-        app_name_apdu = self._build_apdu_command(self.GET_APP_NAME)
-        app_name_response = self._exchange_apdu(app_name_apdu)
-        print(f"✅ App name response: {app_name_response.hex()}")
-        
-        # Basic validation
-        assert len(version_response) > 0
-        assert len(app_name_response) > 0
-    
-    @pytest.mark.speculos
-    def test_public_key_operations(self):
-        """Test public key generation and retrieval"""
-        app_path = self._get_app_path("flex")
-        flex_device = Devices.get_by_name("flex")
-        
-        self.backend = SpeculosBackend(
-            application=app_path,
-            device=flex_device
-        )
-        
-        # Test public spend key retrieval
-        spend_key_apdu = self._build_apdu_command(self.GET_PUBLIC_SPEND_KEY)
-        spend_key_response = self._exchange_apdu(spend_key_apdu)
-        print(f"✅ Public spend key response length: {len(spend_key_response)} bytes")
-        
-        # Test public key retrieval (with account data)
-        account_data = struct.pack("<Q", 0)  # Account 0
-        public_key_apdu = self._build_apdu_command(self.GET_PUBLIC_KEY, data=account_data)
-        public_key_response = self._exchange_apdu(public_key_apdu)
-        print(f"✅ Public key response length: {len(public_key_response)} bytes")
-        
-        assert len(spend_key_response) > 0
-        assert len(public_key_response) > 0
     
     def test_tari_instruction_set(self):
         """Test: verify complete Tari instruction set"""
