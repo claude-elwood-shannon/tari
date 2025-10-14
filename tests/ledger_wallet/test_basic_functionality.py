@@ -89,6 +89,7 @@ class TestTariLedgerWallet:
         flex_device = Devices.get_by_name("flex")
         
         # Configure Speculos backend for Flex with correct device parameter
+        # Mantener modo headless para testing estable
         self.backend = SpeculosBackend(
             application=app_path,
             device=flex_device
