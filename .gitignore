@@ -85,3 +85,7 @@ entrypoint.sh
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Cloned repositories for development (should not be versioned)
+ledger-secure-sdk/
+speculos/
