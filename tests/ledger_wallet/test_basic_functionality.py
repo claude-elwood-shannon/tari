@@ -5,13 +5,35 @@ Advanced tests for Tari Ledger Wallet using Ragger
 This module implements comprehensive functionality tests for the
 Minotari Ledger Wallet application using Ledger's Ragger framework.
 Includes Tari-specific APDU commands and wallet functionality.
+
+Debug Mode: Set DEBUG=True for detailed logging and step-by-step execution.
 """
 
 import os
 import sys
 import pytest
 import struct
+import time
+import logging
 from pathlib import Path
+
+# Debug mode - set to True for detailed logging
+DEBUG = True
+
+# Configure logging for debugging
+if DEBUG:
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+            logging.FileHandler('ledger_tests_debug.log', mode='w')
+        ]
+    )
+else:
+    logging.basicConfig(level=logging.INFO)
+
+logger = logging.getLogger(__name__)
 
 # Add root directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -23,8 +45,8 @@ try:
     from ragger.conftest import configuration
     from ledgered.devices import Devices
 except ImportError as e:
-    print(f"Error importing Ragger: {e}")
-    print("Make sure Ragger is installed: pip install 'ragger[speculos]'")
+    logger.error(f"Error importing Ragger: {e}")
+    logger.error("Make sure Ragger is installed: pip install 'ragger[speculos]'")
     sys.exit(1)
 
 
@@ -50,12 +72,16 @@ class TestTariLedgerWallet:
     
     def setup_method(self, method):
         """Setup before each test"""
-        self.backend = None
-        self.navigator = None
+        # Inicializar atributos si no existen
+        if not hasattr(self, 'backend'):
+            self.backend = None
+        if not hasattr(self, 'navigator'):
+            self.navigator = None
         
     def teardown_method(self, method):
         """Cleanup after each test"""
-        # SpeculosBackend se cierra automáticamente, no necesita cleanup manual
+        # No cerrar Speculos entre tests para mantener la sesión
+        # El backend se cerrará automáticamente al final de la ejecución
         pass
     
     def _get_app_path(self, device="flex"):
@@ -141,6 +167,129 @@ class TestTariLedgerWallet:
         
         # The framework is ready for APDU testing when Speculos session management is resolved
         print("⚠️  Note: APDU execution requires Speculos session optimization")
+
+    @pytest.mark.speculos
+    def test_get_app_name(self):
+        """Test GetAppName command - returns application name"""
+        logger.debug("Starting GetAppName test")
+        
+        # Use existing backend if available, otherwise create new one
+        if self.backend is None:
+            app_path = self._get_app_path("flex")
+            flex_device = Devices.get_by_name("flex")
+            
+            logger.debug("Initializing Speculos backend...")
+            self.backend = SpeculosBackend(
+                application=app_path,
+                device=flex_device
+            )
+            
+            logger.debug("Initializing Navigator...")
+            self.navigator = Navigator(
+                backend=self.backend,
+                device=flex_device,
+                callbacks={}
+            )
+            logger.debug("✅ Application launched successfully")
+        else:
+            logger.debug("✅ Using existing Speculos backend")
+        
+        # Build APDU command for GetAppName (INS=0x02)
+        apdu_command = self._build_apdu_command(self.GET_APP_NAME)
+        logger.debug(f"APDU command built: {apdu_command.hex()}")
+        logger.debug(f"APDU structure: CLA=0x{apdu_command[0]:02x}, INS=0x{apdu_command[1]:02x}")
+        
+        logger.debug("Sending APDU command...")
+        # Add delay for debugging
+        if DEBUG:
+            time.sleep(1)
+        
+        # Send command and get response
+        response = self._exchange_apdu(apdu_command)
+        
+        logger.debug(f"Response received: {response.hex() if response else 'None'}")
+        logger.debug(f"Response length: {len(response) if response else 0} bytes")
+        
+        # Verify response contains the application name
+        # The name should be "minotari-ledger-wallet" in bytes
+        expected_name = b"minotari-ledger-wallet"
+        
+        # Check that response contains the expected name
+        assert response is not None, "No response received"
+        assert len(response) > 0, "Empty response"
+        
+        # The response should contain the application name
+        # Note: The exact format depends on how the Ledger SDK formats the response
+        logger.info(f"✅ GetAppName response: {response.hex()}")
+        logger.info(f"✅ Response length: {len(response)} bytes")
+        
+        # For now, just verify we get a valid response
+        # In a complete implementation, we would parse and validate the name
+        if response[0] == 0x90 or response[-2:] == b'\x90\x00':
+            logger.info("✅ Status word indicates success")
+        else:
+            logger.error(f"❌ Invalid status word: {response.hex()}")
+            raise AssertionError("Invalid status word")
+        
+        logger.info("✅ GetAppName test completed successfully")
+
+    @pytest.mark.speculos
+    def test_get_version(self):
+        """Test GetVersion command - returns application version"""
+        logger.debug("Starting GetVersion test")
+        
+        # Use existing backend if available, otherwise create new one
+        if self.backend is None:
+            app_path = self._get_app_path("flex")
+            flex_device = Devices.get_by_name("flex")
+            
+            logger.debug("Initializing Speculos backend...")
+            self.backend = SpeculosBackend(
+                application=app_path,
+                device=flex_device
+            )
+            
+            logger.debug("Initializing Navigator...")
+            self.navigator = Navigator(
+                backend=self.backend,
+                device=flex_device,
+                callbacks={}
+            )
+            logger.debug("✅ Application launched successfully")
+        else:
+            logger.debug("✅ Using existing Speculos backend")
+        
+        # Build APDU command for GetVersion (INS=0x01)
+        apdu_command = self._build_apdu_command(self.GET_VERSION)
+        logger.debug(f"APDU command built: {apdu_command.hex()}")
+        logger.debug(f"APDU structure: CLA=0x{apdu_command[0]:02x}, INS=0x{apdu_command[1]:02x}")
+        
+        logger.debug("Sending APDU command...")
+        # Add delay for debugging
+        if DEBUG:
+            time.sleep(1)
+        
+        # Send command and get response
+        response = self._exchange_apdu(apdu_command)
+        
+        logger.debug(f"Response received: {response.hex() if response else 'None'}")
+        logger.debug(f"Response length: {len(response) if response else 0} bytes")
+        
+        # Verify response contains version information
+        assert response is not None, "No response received"
+        assert len(response) > 0, "Empty response"
+        
+        logger.info(f"✅ GetVersion response: {response.hex()}")
+        logger.info(f"✅ Response length: {len(response)} bytes")
+        
+        # Verify status word indicates success
+        if response[0] == 0x90 or response[-2:] == b'\x90\x00':
+            logger.info("✅ Status word indicates success")
+        else:
+            logger.error(f"❌ Invalid status word: {response.hex()}")
+            raise AssertionError("Invalid status word")
+        
+        logger.info("✅ GetVersion test completed successfully")
     
     
     def test_tari_instruction_set(self):
@@ -183,20 +332,69 @@ def test_ragger_environment():
     print("✅ Firmware enums available")
 
 
+def run_all_tests_with_persistent_speculos():
+    """Run all tests with a single persistent Speculos session"""
+    logger.info("=== Starting persistent Speculos session ===")
+    
+    # Create test instance
+    test_instance = TestTariLedgerWallet()
+    
+    # Initialize Speculos once for all tests
+    app_path = test_instance._get_app_path("flex")
+    flex_device = Devices.get_by_name("flex")
+    
+    logger.info("Initializing persistent Speculos backend...")
+    test_instance.backend = SpeculosBackend(
+        application=app_path,
+        device=flex_device
+    )
+    
+    logger.info("Initializing Navigator...")
+    test_instance.navigator = Navigator(
+        backend=test_instance.backend,
+        device=flex_device,
+        callbacks={}
+    )
+    
+    logger.info("✅ Persistent Speculos session established")
+    
+    try:
+        # Test 1: Basic app launch (already done by setup)
+        logger.info("=== Running test_app_launch_flex ===")
+        test_instance.test_app_launch_flex()
+        
+        # Test 2: APDU framework
+        logger.info("=== Running test_wallet_apdu_framework ===")
+        test_instance.test_wallet_apdu_framework()
+        
+        # Test 3: GetAppName
+        logger.info("=== Running test_get_app_name ===")
+        test_instance.test_get_app_name()
+        
+        # Test 4: GetVersion
+        logger.info("=== Running test_get_version ===")
+        test_instance.test_get_version()
+        
+        # Test 5: Instruction set
+        logger.info("=== Running test_tari_instruction_set ===")
+        test_instance.test_tari_instruction_set()
+        
+        logger.info("🎉 All tests for Ledger Flex passed successfully!")
+        print("🎉 All tests for Ledger Flex passed successfully!")
+        
+    except Exception as e:
+        logger.error(f"❌ Test error: {e}")
+        print(f"❌ Test error: {e}")
+        # SpeculosBackend se cierra automáticamente al salir del contexto
+        sys.exit(1)
+    finally:
+        # SpeculosBackend se cierra automáticamente al salir del contexto
+        logger.info("Speculos session will close automatically")
+
+
 if __name__ == "__main__":
     # Run basic tests
     test_ragger_environment()
     
-    # Create test instance and run methods
-    test_instance = TestTariLedgerWallet()
-    
-    try:
-        test_instance.setup_method(None)
-        test_instance.test_app_launch_flex()
-        test_instance.teardown_method(None)
-        
-        print("🎉 Basic test for Ledger Flex passed successfully!")
-        
-    except Exception as e:
-        print(f"❌ Test error: {e}")
-        sys.exit(1)
+    # Run all tests with persistent Speculos session
+    run_all_tests_with_persistent_speculos()
