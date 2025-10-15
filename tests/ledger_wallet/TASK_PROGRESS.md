@@ -167,6 +167,93 @@ GetVersion response (decoded): '5.1.0-rc.1'
 - [ ] Delete temporary progress file before MR
 - [ ] Review and merge framework into main branch
 
+## CI Integration Analysis
+
+### Challenges and Solutions for GitHub Actions Integration
+
+#### ✅ Advantages of Using Speculos (Emulator)
+- **No physical hardware dependency** - Pure software emulation
+- **Container-friendly** - Can run in Docker environments
+- **Simplified configuration** - No USB drivers or special permissions needed
+
+#### 🔧 Technical Challenges Identified
+
+**Moderate Complexity:**
+- **Speculos configuration in Docker** - Port mapping and environment variables
+- **Python dependencies** (ragger, speculos-client) in CI image
+- **Pre-compilation of Ledger application** before tests
+- **Session state management** between test executions
+
+**Low Complexity:**
+- **Performance** - Speculos is lighter than full hardware emulation
+- **Resource requirements** - Manageable on standard GitHub runners
+
+#### 🚀 Proposed GitHub Actions Workflow
+
+```yaml
+name: Ledger Tests
+on: [push, pull_request]
+
+jobs:
+  ledger-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install ragger speculos-client
+        
+    - name: Start Speculos (headless mode)
+      run: |
+        speculos --display headless --apdu-port 5001 apps/minotari_ledger_wallet.elf &
+        sleep 5  # Wait for Speculos to start
+        
+    - name: Run Ledger tests
+      run: |
+        python tests/ledger_wallet/test_tari_ragger.py
+      env:
+        SPECULOS_HOST: localhost
+        SPECULOS_APDU_PORT: 5001
+```
+
+#### 📋 Implementation Strategy (4-Phase Approach)
+
+**Phase 1: Local Validation**
+- Validate framework in controlled environment
+- Document exact dependencies and configuration
+
+**Phase 2: Dockerization**
+- Create Docker image with Speculos and dependencies
+- Test in local containers
+
+**Phase 3: Limited CI Integration**
+- Execute only critical tests in CI
+- Use runners with Docker enabled
+
+**Phase 4: Full Optimization**
+- Parallelize tests for better performance
+- Implement dependency caching
+- Monitor and optimize execution time
+
+#### 🔍 Critical Points to Validate
+1. **Speculos headless mode** - Functionality without GUI
+2. **Application compilation** - Pre-test build requirements
+3. **Stability in CI** - Speculos reliability in automated environments
+4. **Port configuration** - Avoid conflicts with other services
+
+#### 📊 Technical Requirements
+- **Python 3.10+** with ragger and speculos-client
+- **Speculos emulator** with Ledger Flex support
+- **Compiled Ledger application** (.elf file)
+- **Port availability** (5000 for API, 5001 for APDU)
+- **Environment variables** for configuration
+
 ## Transition Strategy
 - **Current State**: Dual framework (SpeculosClient + Ragger)
 - **Target State**: Ragger-only integration
