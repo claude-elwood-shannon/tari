@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Persistent Speculos test for Tari Ledger Wallet
+Main test for Tari Ledger Wallet
 
-This test uses SpeculosClient directly to maintain a persistent Speculos session
-across multiple APDU commands, solving the session persistence issue.
+This is the primary test script for the Minotari Ledger Wallet application.
+It uses SpeculosClient to test APDU commands and wallet functionality on Ledger devices.
 """
 
 import os
@@ -28,7 +28,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler('persistent_speculos_debug.log', mode='w')
+        logging.FileHandler('tari_ledger_wallet_test.log', mode='w')
     ]
 )
 
@@ -107,7 +107,10 @@ class PersistentTariTest:
             data=b""
         )
         
-        logger.info(f"GetAppName response: {response.hex()}")
+        # Decode the response (hex to ASCII)
+        app_name_decoded = response.decode('ascii', errors='ignore')
+        logger.info(f"GetAppName response (hex): {response.hex()}")
+        logger.info(f"GetAppName response (decoded): '{app_name_decoded}'")
         logger.info(f"Response length: {len(response)} bytes")
         
         # Verify response
@@ -134,7 +137,10 @@ class PersistentTariTest:
             data=b""
         )
         
-        logger.info(f"GetVersion response: {response.hex()}")
+        # Decode the response (hex to ASCII)
+        version_decoded = response.decode('ascii', errors='ignore')
+        logger.info(f"GetVersion response (hex): {response.hex()}")
+        logger.info(f"GetVersion response (decoded): '{version_decoded}'")
         logger.info(f"Response length: {len(response)} bytes")
         
         # Verify response
@@ -165,7 +171,18 @@ class PersistentTariTest:
                 data=b""
             )
             
-            logger.info(f"{name} response: {response.hex()}")
+            # Decode the response based on command type
+            if name == "GetAppName":
+                decoded = response.decode('ascii', errors='ignore')
+                logger.info(f"{name} response (hex): {response.hex()}")
+                logger.info(f"{name} response (decoded): '{decoded}'")
+            elif name == "GetVersion":
+                decoded = response.decode('ascii', errors='ignore')
+                logger.info(f"{name} response (hex): {response.hex()}")
+                logger.info(f"{name} response (decoded): '{decoded}'")
+            else:
+                logger.info(f"{name} response: {response.hex()}")
+            
             assert len(response) > 0, f"Empty response for {name}"
             logger.info(f"✅ {name} test passed")
             
