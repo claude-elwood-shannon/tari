@@ -85,23 +85,37 @@ GetVersion response (decoded): '5.1.0-rc.1'
 🎉 All persistent tests passed successfully!
 ```
 
-### Ragger Test Suite
+### Ragger Test Suite (✅ Verified Working)
 
-The `test_tari_ragger.py` file uses Ledger's official Ragger testing framework:
+The `test_tari_ragger.py` file uses Ledger's official Ragger testing framework and has been verified to work correctly:
 
 ```bash
-# Run Ragger tests for Ledger Flex device
+# ✅ Verified working command for Ledger Flex device
 python3 -m pytest tests/ledger_wallet/test_tari_ragger.py --device flex -v
-
-# Run with specific backend
-python3 -m pytest tests/ledger_wallet/test_tari_ragger.py --backend speculos -v
 ```
 
-**Ragger Features:**
-- Official Ledger testing framework
-- Standardized APDU testing patterns
-- Device-agnostic testing capabilities
-- Professional test structure
+**Expected Output:**
+```
+============================================ test session starts =============================================
+collected 5 items
+
+tests/ledger_wallet/test_tari_ragger.py::test_tari_app_launch[flex] PASSED                             [ 20%]
+tests/ledger_wallet/test_tari_ragger.py::test_get_app_name[flex] PASSED                                [ 40%]
+tests/ledger_wallet/test_tari_ragger.py::test_get_version[flex] PASSED                                 [ 60%]
+tests/ledger_wallet/test_tari_ragger.py::test_multiple_commands[flex] PASSED                           [ 80%]
+tests/ledger_wallet/test_tari_ragger.py::test_speculos_only[flex] PASSED                               [100%]
+
+============================================= 5 passed in 5.29s ==============================================
+```
+
+**Ragger Features (✅ Verified):**
+- ✅ Official Ledger testing framework
+- ✅ Standardized APDU testing patterns
+- ✅ Device-agnostic testing capabilities
+- ✅ Professional test structure
+- ✅ Automatic Speculos management
+- ✅ Persistent session handling
+- ✅ Integrated APDU logging
 
 **Configuration:**
 The `ledger_app.toml` manifest file is required for Ragger:
@@ -173,7 +187,12 @@ speculos: Api level detected from metadata: 24
    - Install Ragger with Speculos support: `pip install 'ragger[speculos]'`
    - Ensure Speculos is properly installed
 
-3. **Session Persistence Issues**
+3. **Ragger Parameter Requirements**
+   - **Required parameter**: Always include `--device flex` when running Ragger tests
+   - **Correct command**: `python3 -m pytest tests/ledger_wallet/test_tari_ragger.py --device flex -v`
+   - **Error without device**: `pytest: error: the following arguments are required: --device`
+
+4. **Session Persistence Issues**
    - The framework uses persistent sessions by default
    - Check that ports 5000 and 5001 are available
 
