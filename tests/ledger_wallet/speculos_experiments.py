@@ -11,7 +11,24 @@ import os
 import sys
 import time
 import subprocess
+import logging
 from pathlib import Path
+
+# Configure logging
+log_dir = Path(__file__).parent / 'logs'
+log_dir.mkdir(exist_ok=True)
+log_file = log_dir / 'speculos_experiments.log'
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler(log_file, mode='w')
+    ]
+)
+
+logger = logging.getLogger(__name__)
 
 # Add root directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))

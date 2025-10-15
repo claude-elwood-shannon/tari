@@ -89,3 +89,4 @@ __pycache__/
 # Cloned repositories for development (should not be versioned)
 ledger-secure-sdk/
 speculos/
+ledgered/

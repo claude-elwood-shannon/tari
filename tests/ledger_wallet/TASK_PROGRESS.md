@@ -35,6 +35,9 @@ Establish a complete testing framework for the Minotari Ledger Wallet applicatio
 - [x] Redundant script removal
 - [x] Complete README creation
 - [x] Exhaustive technical documentation
+- [x] Ragger framework integration and testing
+- [x] Log organization in dedicated folder
+- [x] Root directory cleanup
 
 ## Framework Files
 
@@ -63,15 +66,31 @@ GetVersion response (decoded): '5.1.0-rc.1'
 🎉 All persistent tests passed successfully!
 ```
 
+### ✅ Log Organization (COMPLETED)
+- **Structure**: All logs organized in `tests/ledger_wallet/logs/`
+- **Current Logs**: `tari_ledger_wallet_test.log`, `speculos_experiments.log`
+- **Archive**: 6 historical logs moved to `logs/archive/`
+- **Root Clean**: No `.log` files in project root directory
+- **Ragger Tests**: Console logging only (no file logs generated)
+
 ## Repository Status
 - **Branch**: `feature/ledger-test-env-c0e6928`
 - **Latest Commit**: `fee21a61159340e26794c80029279511299110f2`
 - **Files**: 3 main files + documentation
 
 ## Next Steps
-- [ ] Create Merge Request when task is complete
+- [ ] **Short-term**: Stabilize Ragger integration over next few days
+- [ ] **Medium-term**: Keep previous experiments as reference during stabilization
+- [ ] **Long-term**: Transition to Ragger-only framework
+- [ ] Create Merge Request when Ragger integration is stable
 - [ ] Delete temporary progress file before MR
 - [ ] Review and merge framework into main branch
+
+## Transition Strategy
+- **Current State**: Dual framework (SpeculosClient + Ragger)
+- **Target State**: Ragger-only integration
+- **Timeline**: Allow several days for Ragger stabilization
+- **Backup**: Previous experiments remain as reference during transition
 
 ## Notes
 This file is temporary and should be deleted before creating the Merge Request. It serves as internal progress tracking during development.

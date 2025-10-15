@@ -1,0 +1,7 @@
+# Ledger application manifest for Tari Ledger Wallet
+# This file is required by Ragger for proper testing configuration
+
+[app]
+sdk = "rust"
+build_directory = "applications/minotari_ledger_wallet/wallet"
+devices = ["flex"]

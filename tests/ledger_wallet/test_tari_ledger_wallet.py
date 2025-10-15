@@ -23,12 +23,16 @@ except ImportError as e:
     sys.exit(1)
 
 # Configure logging
+log_dir = Path(__file__).parent / 'logs'
+log_dir.mkdir(exist_ok=True)
+log_file = log_dir / 'tari_ledger_wallet_test.log'
+
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler('tari_ledger_wallet_test.log', mode='w')
+        logging.FileHandler(log_file, mode='w')
     ]
 )
 
