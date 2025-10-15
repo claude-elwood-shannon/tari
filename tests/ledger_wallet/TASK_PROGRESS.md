@@ -1,6 +1,57 @@
 # Task: Tari Ledger Wallet Testing Framework
 
-**Issue**: c0e6928-ledger-test-env  
+## Issue Original Content
+
+**Issue Identifier**: c0e6928  
+**Issue Title**: ledger test env  
+**Repository**: Tari Project (https://github.com/tari-project/tari)
+**Status**: [open]  
+**Author**: SW van Heerden (SWvheerden)  
+**Created**: 2025-02-20 11:02:14 +0100 CET  
+**Last Edited**: 2025-02-20 11:03:57 +0100 CET
+
+### Issue Description (Original - Exact Text)
+"Get up and running with ledger unit tests for CI.
+We need to get up and running with ragger and write a few unit tests to test all handles.
+Look at the default rust boiler plate app as an example."
+
+### Key Requirements from Issue (Exact)
+- Get up and running with ledger unit tests for CI
+- Get up and running with ragger
+- Write a few unit tests to test all handles
+- Look at the default rust boiler plate app as an example
+
+### Git-Bug Command for Reference
+```bash
+# Comando para consultar esta issue específica
+git-bug bug show c0e6928
+
+# Comando para listar todas las issues
+git-bug bug list
+```
+
+## Our Interpretation and Derived Points
+
+### Core Objectives (Our Perspective)
+1. **Framework Foundation**: Create a robust testing infrastructure that can scale with the application
+2. **Developer Experience**: Ensure the framework is easy to use and well-documented
+3. **Future-Proofing**: Design for extensibility to support additional APDU commands
+4. **Integration Quality**: Maintain compatibility with Ledger's official testing patterns
+5. **Knowledge Preservation**: Document lessons learned and best practices
+
+### Derived Technical Requirements
+- Support for all 12 Tari-specific APDU commands
+- Session persistence across multiple command executions
+- Automated logging and debugging capabilities
+- Device-agnostic testing approach
+- CI/CD pipeline integration readiness
+- Professional documentation standards
+
+### Strategic Considerations
+- **Short-term**: Focus on basic functionality and stabilization
+- **Medium-term**: Extend to advanced cryptographic operations
+- **Long-term**: Transition to Ragger-only framework for standardization
+
 **Start Date**: 2025-12-10  
 **Status**: ✅ COMPLETED  
 **Last Update**: 2025-10-15
@@ -48,6 +99,36 @@ Establish a complete testing framework for the Minotari Ledger Wallet applicatio
 
 ### Temporary Files (to delete before MR)
 - **`TASK_PROGRESS.md`** - This progress tracking file
+
+## APDU Handles Status
+
+### ✅ Handles Actualmente Probados (2/12)
+- **GET_VERSION** (0x01) - ✅ Implementado y probado
+- **GET_APP_NAME** (0x02) - ✅ Implementado y probado
+
+### 🔄 Handles Pendientes de Prueba (10/12)
+
+**Comandos Básicos:**
+- **GET_PUBLIC_SPEND_KEY** (0x03) - Clave pública de gasto
+- **GET_PUBLIC_KEY** (0x04) - Clave pública general
+
+**Comandos de Script:**
+- **GET_SCRIPT_SIGNATURE_DERIVED** (0x05) - Firma de script derivada
+- **GET_SCRIPT_OFFSET** (0x06) - Offset de script
+- **GET_SCRIPT_SCHNORR_SIGNATURE** (0x10) - Firma Schnorr de script
+- **GET_SCRIPT_SIGNATURE_MANAGED** (0x12) - Firma de script gestionada
+
+**Comandos de Claves y Firmas:**
+- **GET_VIEW_KEY** (0x07) - Clave de vista
+- **GET_DH_SHARED_SECRET** (0x08) - Secreto compartido Diffie-Hellman
+- **GET_RAW_SCHNORR_SIGNATURE** (0x09) - Firma Schnorr cruda
+- **GET_ONE_SIDED_METADATA_SIGNATURE** (0x11) - Firma de metadatos unilaterales
+
+### 📊 Métricas de Progreso
+- **Completado**: 2/12 handles (16.7%)
+- **Pendiente**: 10/12 handles (83.3%)
+- **Framework Listo**: ✅ Ragger configurado y funcionando
+- **Documentación**: ✅ Guía de uso disponible
 
 ## Technical Validation
 
