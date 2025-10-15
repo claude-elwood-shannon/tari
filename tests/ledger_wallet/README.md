@@ -254,6 +254,17 @@ When contributing to the testing framework:
 3. Maintain session persistence for multiple command testing
 4. Document new APDU commands and their expected responses
 
+## Documentation
+
+### Framework Documentation
+- [Ragger Framework Documentation](https://github.com/LedgerHQ/ragger)
+- [Speculos Documentation](https://github.com/LedgerHQ/speculos)
+- [Ledger Developer Portal](https://developers.ledger.com/)
+
+### Project-Specific Documentation
+- **[RAGGER_USAGE.md](RAGGER_USAGE.md)** - Detailed guide on using Ragger in this testing framework
+- [TASK_PROGRESS.md](TASK_PROGRESS.md) - Development progress tracking (temporary)
+
 ## License
 
 This testing framework is part of the Tari project and follows the same licensing terms as the main repository.
