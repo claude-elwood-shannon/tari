@@ -102,53 +102,53 @@ Establish a complete testing framework for the Minotari Ledger Wallet applicatio
 
 ## APDU Handles Status
 
-### ✅ Tests Representativos Implementados (2/12)
-**Framework Validado con Comandos Básicos:**
-- **GET_VERSION** (0x01) - ✅ Implementado y probado (validación de versión)
-- **GET_APP_NAME** (0x02) - ✅ Implementado y probado (identificación de aplicación)
+### ✅ Representative Tests Implemented (2/12)
+**Framework Validated with Basic Commands:**
+- **GET_VERSION** (0x01) - ✅ Implemented and tested (version validation)
+- **GET_APP_NAME** (0x02) - ✅ Implemented and tested (application identification)
 
-**✅ Framework Completamente Funcional:**
-- Los tests representativos demuestran que el framework Ragger está operativo
-- Sesión persistente validada con múltiples comandos secuenciales
-- Configuración de Speculos verificada y estable
-- Patrón de testing establecido para extensión
+**✅ Framework Fully Functional:**
+- Representative tests demonstrate that the Ragger framework is operational
+- Persistent session validated with multiple sequential commands
+- Speculos configuration verified and stable
+- Testing pattern established for extension
 
-### 🔄 Handles Pendientes de Implementación (10/12)
+### 🔄 Handles Pending Implementation (10/12)
 
-**Comandos Básicos:**
-- **GET_PUBLIC_SPEND_KEY** (0x03) - Clave pública de gasto
-- **GET_PUBLIC_KEY** (0x04) - Clave pública general
+**Basic Commands:**
+- **GET_PUBLIC_SPEND_KEY** (0x03) - Public spend key
+- **GET_PUBLIC_KEY** (0x04) - General public key
 
-**Comandos de Script:**
-- **GET_SCRIPT_SIGNATURE_DERIVED** (0x05) - Firma de script derivada
-- **GET_SCRIPT_OFFSET** (0x06) - Offset de script
-- **GET_SCRIPT_SCHNORR_SIGNATURE** (0x10) - Firma Schnorr de script
-- **GET_SCRIPT_SIGNATURE_MANAGED** (0x12) - Firma de script gestionada
+**Script Commands:**
+- **GET_SCRIPT_SIGNATURE_DERIVED** (0x05) - Derived script signature
+- **GET_SCRIPT_OFFSET** (0x06) - Script offset
+- **GET_SCRIPT_SCHNORR_SIGNATURE** (0x10) - Script Schnorr signature
+- **GET_SCRIPT_SIGNATURE_MANAGED** (0x12) - Managed script signature
 
-**Comandos de Claves y Firmas:**
-- **GET_VIEW_KEY** (0x07) - Clave de vista
-- **GET_DH_SHARED_SECRET** (0x08) - Secreto compartido Diffie-Hellman
-- **GET_RAW_SCHNORR_SIGNATURE** (0x09) - Firma Schnorr cruda
-- **GET_ONE_SIDED_METADATA_SIGNATURE** (0x11) - Firma de metadatos unilaterales
+**Key and Signature Commands:**
+- **GET_VIEW_KEY** (0x07) - View key
+- **GET_DH_SHARED_SECRET** (0x08) - Diffie-Hellman shared secret
+- **GET_RAW_SCHNORR_SIGNATURE** (0x09) - Raw Schnorr signature
+- **GET_ONE_SIDED_METADATA_SIGNATURE** (0x11) - One-sided metadata signature
 
-### 📊 Estado del Framework
+### 📊 Framework Status
 
-**Framework Validado:**
-- ✅ **Tests representativos**: 2/12 handles probados exitosamente
-- ✅ **Infraestructura lista**: Framework Ragger completamente funcional
-- ✅ **Patrón establecido**: Modelo de testing reproducible para extensión
-- ✅ **Sesión persistente**: Comandos múltiples en misma sesión verificados
+**Framework Validated:**
+- ✅ **Representative tests**: 2/12 handles tested successfully
+- ✅ **Infrastructure ready**: Ragger framework fully functional
+- ✅ **Pattern established**: Reproducible testing model for extension
+- ✅ **Session persistence**: Multiple commands in same session verified
 
-**Próximos Pasos:**
-- 🔄 **Extensión**: Implementar los 10 handles restantes usando el patrón establecido
-- 🔄 **Validación avanzada**: Probar comandos criptográficos complejos
-- 🔄 **Integración CI**: Preparar para ejecución automatizada
+**Next Steps:**
+- 🔄 **Extension**: Implement the 10 remaining handles using the established pattern
+- 🔄 **Advanced validation**: Test complex cryptographic commands
+- 🔄 **CI integration**: Prepare for automated execution
 
-**Métricas:**
-- **Framework operativo**: ✅ 100% funcional
-- **Tests implementados**: 2/12 handles (16.7%)
-- **Patrón establecido**: ✅ Listo para extensión
-- **Documentación**: ✅ Completa y verificada
+**Metrics:**
+- **Framework operational**: ✅ 100% functional
+- **Tests implemented**: 2/12 handles (16.7%)
+- **Pattern established**: ✅ Ready for extension
+- **Documentation**: ✅ Complete and verified
 
 ## Technical Validation
 
