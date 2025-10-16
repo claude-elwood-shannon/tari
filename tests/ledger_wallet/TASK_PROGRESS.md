@@ -54,7 +54,7 @@ git-bug bug list
 
 **Start Date**: 2025-12-10  
 **Status**: ✅ COMPLETED  
-**Last Update**: 2025-10-15
+**Last Update**: 2025-12-17
 
 ## Task Objective
 Establish a complete testing framework for the Minotari Ledger Wallet application using Speculos and Ragger, with support for APDU commands and persistent sessions.
@@ -102,10 +102,11 @@ Establish a complete testing framework for the Minotari Ledger Wallet applicatio
 
 ## APDU Handles Status
 
-### ✅ Representative Tests Implemented (2/12)
+### ✅ Representative Tests Implemented (3/12)
 **Framework Validated with Basic Commands:**
 - **GET_VERSION** (0x01) - ✅ Implemented and tested (version validation)
 - **GET_APP_NAME** (0x02) - ✅ Implemented and tested (application identification)
+- **GET_PUBLIC_SPEND_KEY** (0x03) - ✅ Implemented and tested (public spend key with account number)
 
 **✅ Framework Fully Functional:**
 - Representative tests demonstrate that the Ragger framework is operational
@@ -113,10 +114,9 @@ Establish a complete testing framework for the Minotari Ledger Wallet applicatio
 - Speculos configuration verified and stable
 - Testing pattern established for extension
 
-### 🔄 Handles Pending Implementation (10/12)
+### 🔄 Handles Pending Implementation (9/12)
 
 **Basic Commands:**
-- **GET_PUBLIC_SPEND_KEY** (0x03) - Public spend key
 - **GET_PUBLIC_KEY** (0x04) - General public key
 
 **Script Commands:**
@@ -134,19 +134,19 @@ Establish a complete testing framework for the Minotari Ledger Wallet applicatio
 ### 📊 Framework Status
 
 **Framework Validated:**
-- ✅ **Representative tests**: 2/12 handles tested successfully
+- ✅ **Representative tests**: 3/12 handles tested successfully
 - ✅ **Infrastructure ready**: Ragger framework fully functional
 - ✅ **Pattern established**: Reproducible testing model for extension
 - ✅ **Session persistence**: Multiple commands in same session verified
 
 **Next Steps:**
-- 🔄 **Extension**: Implement the 10 remaining handles using the established pattern
+- 🔄 **Extension**: Implement the 9 remaining handles using the established pattern
 - 🔄 **Advanced validation**: Test complex cryptographic commands
 - 🔄 **CI integration**: Prepare for automated execution
 
 **Metrics:**
 - **Framework operational**: ✅ 100% functional
-- **Tests implemented**: 2/12 handles (16.7%)
+- **Tests implemented**: 3/12 handles (25%)
 - **Pattern established**: ✅ Ready for extension
 - **Documentation**: ✅ Complete and verified
 

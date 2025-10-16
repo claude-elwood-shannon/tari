@@ -140,12 +140,12 @@ python3 tests/ledger_wallet/speculos_experiments.py
 
 The framework currently supports the following Tari-specific APDU commands:
 
-### Basic Commands
+### Basic Commands (✅ IMPLEMENTED AND VERIFIED)
 - **`GET_VERSION`** (0x01) - Returns application version
 - **`GET_APP_NAME`** (0x02) - Returns application name
+- **`GET_PUBLIC_SPEND_KEY`** (0x03) - Returns public spend key with account number
 
 ### Advanced Commands (Framework Ready)
-- `GET_PUBLIC_SPEND_KEY` (0x03)
 - `GET_PUBLIC_KEY` (0x04)
 - `GET_SCRIPT_SIGNATURE_DERIVED` (0x05)
 - `GET_SCRIPT_OFFSET` (0x06)
