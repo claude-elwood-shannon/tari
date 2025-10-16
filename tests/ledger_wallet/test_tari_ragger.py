@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 WALLET_CLA = 0x80
 GET_VERSION = 0x01
 GET_APP_NAME = 0x02
+GET_PUBLIC_SPEND_KEY = 0x03
 
 def test_tari_app_launch(backend):
     """Test that the Tari application launches successfully"""
@@ -79,17 +80,51 @@ def test_get_version(backend):
     logger.info("✅ GetVersion test passed")
 
 
+def test_get_public_spend_key(backend):
+    """Test GET_PUBLIC_SPEND_KEY command with account number"""
+    logger.info("Testing GET_PUBLIC_SPEND_KEY command")
+    
+    # Account number 0 (8 bytes in little-endian)
+    account_number = 0
+    account_bytes = account_number.to_bytes(8, byteorder='little')
+    
+    # Send command using Ragger's exchange method
+    response = backend.exchange(
+        cla=WALLET_CLA,
+        ins=GET_PUBLIC_SPEND_KEY,
+        p1=0x00,
+        p2=0x00,
+        data=account_bytes  # 8 bytes para account number
+    )
+    
+    # RAPDU object has data and status attributes
+    logger.info(f"GET_PUBLIC_SPEND_KEY response (hex): {response.data.hex()}")
+    logger.info(f"Response length: {len(response.data)} bytes")
+    logger.info(f"Response status: {hex(response.status)}")
+    
+    # Verify response structure: version (1 byte) + public key (32 bytes)
+    assert len(response.data) == 33, f"Expected 33 bytes, got {len(response.data)}"
+    assert response.data[0] == 1, f"Expected version 1, got {response.data[0]}"  # RESPONSE_VERSION
+    assert response.status == 0x9000, f"Unexpected status: {hex(response.status)}"
+    
+    # Log the public key (32 bytes after version)
+    public_key_hex = response.data[1:].hex()
+    logger.info(f"Public key: {public_key_hex}")
+    logger.info("✅ GET_PUBLIC_SPEND_KEY test passed")
+
+
 def test_multiple_commands(backend):
     """Test multiple APDU commands in sequence"""
     logger.info("Testing multiple APDU commands")
     
     # Test sequence of commands
     commands = [
-        (GET_APP_NAME, "GetAppName"),
-        (GET_VERSION, "GetVersion"),
+        (GET_APP_NAME, "GetAppName", b""),
+        (GET_VERSION, "GetVersion", b""),
+        (GET_PUBLIC_SPEND_KEY, "GetPublicSpendKey", (0).to_bytes(8, byteorder='little')),
     ]
     
-    for instruction, name in commands:
+    for instruction, name, data in commands:
         logger.info(f"Testing {name}...")
         
         response = backend.exchange(
@@ -97,7 +132,7 @@ def test_multiple_commands(backend):
             ins=instruction,
             p1=0x00,
             p2=0x00,
-            data=b""
+            data=data
         )
         
         # RAPDU object has data and status attributes
