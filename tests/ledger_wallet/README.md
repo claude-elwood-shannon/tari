@@ -121,6 +121,8 @@ The `test_tari_ragger.py` file uses Ledger's official Ragger testing framework a
 
 ```bash
 # ✅ Verified working command for Ledger Nano S Plus device
+# IMPORTANT: Run from the project root directory (/data/git/tari)
+cd /data/git/tari
 python3 -m pytest tests/ledger_wallet/test_tari_ragger.py --device nanosp -v
 ```
 
