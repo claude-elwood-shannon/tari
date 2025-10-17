@@ -83,6 +83,12 @@ export LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk
 LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk cargo ledger build nanosplus
 ```
 
+**SDK Availability**: Ensure the Ledger Secure SDK is available at the specified path. If not present, clone it:
+
+```bash
+git clone https://github.com/LedgerHQ/ledger-secure-sdk.git /data/git/tari/ledger-secure-sdk
+```
+
 ## Running Tests
 
 ### Main Test Script
