@@ -4,4 +4,4 @@
 [app]
 sdk = "rust"
 build_directory = "applications/minotari_ledger_wallet/wallet"
-devices = ["nanosp"]
+devices = ["flex", "nanosp"]

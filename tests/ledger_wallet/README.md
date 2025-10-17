@@ -63,13 +63,15 @@ This will generate the application binary at:
 
 ### Alternative Device Support
 
-**Note on Device Compatibility**: The current SDK configuration may not support "flex" directly due to version incompatibilities. Use "nanosplus" as the primary target:
+**Note on Device Compatibility**: Both "nanosplus" and "flex" devices are supported. If you encounter compilation issues with "flex", try cleaning the cache first:
 
 ```bash
 # ✅ Working: nanosplus device
 LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk cargo ledger build nanosplus
 
-# ❌ May fail: flex device (SDK version incompatibility)
+# ✅ Working: flex device (requires clean cache if previously failed)
+cd applications/minotari_ledger_wallet/wallet
+cargo clean
 LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk cargo ledger build flex
 ```
 
@@ -228,9 +230,14 @@ speculos: Api level detected from metadata: 24
    - **Error without device**: `pytest: error: the following arguments are required: --device`
 
 4. **Device Compatibility Issues**
-   - **Flex device not working**: Use `nanosplus` for compilation and `nanosp` for testing
+   - **Flex device compilation failure**: If `cargo ledger build flex` fails with `UnsupportedDevice` error, clean the cache first:
+     ```bash
+     cd applications/minotari_ledger_wallet/wallet
+     cargo clean
+     LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk cargo ledger build flex
+     ```
    - **SDK version mismatch**: Ensure `LEDGER_SDK_PATH` is set correctly to `/data/git/tari/ledger-secure-sdk`
-   - **Manifest mismatch**: Update `ledger_app.toml` to use `devices = ["nanosp"]`
+   - **Manifest mismatch**: Update `ledger_app.toml` to use `devices = ["nanosp"]` for Ragger testing
 
 5. **Session Persistence Issues**
    - The framework uses persistent sessions by default
