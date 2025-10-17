@@ -1,24 +1,24 @@
-# Integración CI con Ledger App Builder
+# CI Integration with Ledger App Builder
 
-Este documento describe cómo integrar el testing framework de Tari Ledger Wallet con el sistema de CI usando la imagen Docker oficial de Ledger.
+This document describes how to integrate the Tari Ledger Wallet testing framework with the CI system using Ledger's official Docker image.
 
-## Descripción General
+## Overview
 
-El proyecto ya tiene un workflow de CI configurado en `.github/workflows/build_ledger_wallet.yml` que utiliza la imagen Docker oficial de Ledger para compilar la aplicación para múltiples dispositivos.
+The project already has a CI workflow configured in `.github/workflows/build_ledger_wallet.yml` that uses Ledger's official Docker image to compile the application for multiple devices.
 
-## Workflow CI Existente
+## Existing CI Workflow
 
-### Configuración Actual
+### Current Configuration
 
-El workflow actual:
-- **Imagen Docker**: `ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:4.15.0`
-- **Dispositivos soportados**: 
-  - ✅ `nanosplus` (funcionando correctamente)
-  - ✅ `flex` (funcionando correctamente)
+The current workflow:
+- **Docker Image**: `ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:4.15.0`
+- **Supported Devices**: 
+  - ✅ `nanosplus` (working correctly)
+  - ✅ `flex` (working correctly)
   - ⚠️ `nanox` (best_effort: true)
   - ⚠️ `stax` (best_effort: true)
 
-### Comando de Compilación
+### Compilation Command
 
 ```yaml
 docker run --rm \
@@ -28,30 +28,30 @@ docker run --rm \
   cargo ledger build ${{ matrix.ledger_target }} -- --locked
 ```
 
-## Imágenes Docker Disponibles
+## Available Docker Images
 
-### Tipos de Imágenes
+### Image Types
 
-1. **`ledger-app-builder`** (imagen completa)
-   - Base: Debian slim + herramientas Rust
-   - Uso: Compilación estándar
-   - Comando: `docker pull ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest`
+1. **`ledger-app-builder`** (full image)
+   - Base: Debian slim + Rust tools
+   - Use: Standard compilation
+   - Command: `docker pull ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest`
 
-2. **`ledger-app-builder-lite`** (imagen ligera)
+2. **`ledger-app-builder-lite`** (lightweight image)
    - Base: Debian slim
-   - Uso: Solo compilación C
-   - Comando: `docker pull ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder-lite:latest`
+   - Use: C compilation only
+   - Command: `docker pull ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder-lite:latest`
 
-3. **`ledger-app-dev-tools`** (imagen de desarrollo)
-   - Base: Imagen completa + Ragger + Speculos
-   - Uso: Testing y desarrollo
-   - Comando: `docker pull ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest`
+3. **`ledger-app-dev-tools`** (development image)
+   - Base: Full image + Ragger + Speculos
+   - Use: Testing and development
+   - Command: `docker pull ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest`
 
-## Integración de Testing en CI
+## Testing Integration in CI
 
-### Propuesta de Workflow de Testing
+### Proposed Testing Workflow
 
-Para integrar los tests Ragger en la CI, podemos crear un workflow adicional:
+To integrate Ragger tests in CI, we can create an additional workflow:
 
 ```yaml
 name: Test Ledger Wallet with Ragger
@@ -95,12 +95,12 @@ jobs:
           python -m pytest test_tari_ragger.py --device ${{ matrix.device }} -v
 ```
 
-### Comandos de Testing con Docker
+### Testing Commands with Docker
 
-Para ejecutar tests dentro del contenedor de desarrollo:
+To run tests inside the development container:
 
 ```bash
-# Ejecutar contenedor de desarrollo
+# Run development container
 docker run --rm -ti \
   -v "$(realpath .):/app" \
   --user $(id -u):$(id -g) \
@@ -108,27 +108,27 @@ docker run --rm -ti \
   -e DISPLAY=$DISPLAY \
   ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest
 
-# Dentro del contenedor
+# Inside container
 python -m virtualenv venv --system-site-package
 source ./venv/bin/activate
 pip install -r tests/requirements.txt
 python -m pytest tests/ledger_wallet/test_tari_ragger.py --device nanosp -v
 ```
 
-## Mejoras Propuestas para la CI
+## Proposed CI Improvements
 
-### 1. Actualizar Versión de la Imagen Docker
+### 1. Update Docker Image Version
 
-El workflow actual usa la versión `4.15.0`. Podemos actualizar a la última versión:
+The current workflow uses version `4.15.0`. We can update to the latest version:
 
 ```yaml
 env:
   DOCKER_IMAGE: "ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest"
 ```
 
-### 2. Agregar Testing Automático
+### 2. Add Automated Testing
 
-Proponemos agregar un job de testing después de la compilación:
+We propose adding a testing job after compilation:
 
 ```yaml
   ragger-testing:
@@ -146,38 +146,38 @@ Proponemos agregar un job de testing después de la compilación:
           
       - name: Run Ragger tests
         run: |
-          # Configurar entorno y ejecutar tests
+          # Setup environment and run tests
           python -m pytest tests/ledger_wallet/test_tari_ragger.py --device ${{ matrix.device }} -v
 ```
 
-### 3. Integración con Speculos
+### 3. Speculos Integration
 
-Para testing automatizado sin interfaz gráfica:
+For automated testing without GUI:
 
 ```yaml
 - name: Run headless Speculos tests
   run: |
-    # Ejecutar Speculos en modo headless
+    # Run Speculos in headless mode
     speculos build/nanosplus/bin/app.elf --model nanosplus --display headless &
-    # Ejecutar tests Ragger
+    # Run Ragger tests
     python -m pytest tests/ledger_wallet/test_tari_ragger.py --device nanosp -v
 ```
 
-## Configuración de Variables de Entorno
+## Environment Configuration
 
-### Variables Requeridas
+### Required Variables
 
 ```bash
-# Para compilación local (equivalente a CI)
+# For local compilation (equivalent to CI)
 export LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk
 
-# Para testing con Ragger
-export RAGGER_DEVICE=nanosp  # o flex
+# For testing with Ragger
+export RAGGER_DEVICE=nanosp  # or flex
 ```
 
 ### Manifest Configuration
 
-El archivo `ledger_app.toml` debe estar configurado correctamente:
+The `ledger_app.toml` file must be correctly configured:
 
 ```toml
 [app]
@@ -186,28 +186,28 @@ build_directory = "applications/minotari_ledger_wallet/wallet"
 devices = ["flex", "nanosp"]
 ```
 
-## Troubleshooting de CI
+## CI Troubleshooting
 
-### Problemas Comunes
+### Common Issues
 
-1. **Compilación falla para flex**
-   - Solución: Limpiar caché antes de compilar
+1. **Flex compilation fails**
+   - Solution: Clean cache before compiling
    ```bash
    cargo clean
    cargo ledger build flex
    ```
 
-2. **Ragger no encuentra el manifest**
-   - Verificar que `ledger_app.toml` esté en el directorio raíz
-   - Confirmar que la ruta `build_directory` sea correcta
+2. **Ragger cannot find manifest**
+   - Verify `ledger_app.toml` is in root directory
+   - Confirm `build_directory` path is correct
 
-3. **Speculos no inicia en CI**
-   - Usar modo headless: `--display headless`
-   - Verificar que el binario esté compilado correctamente
+3. **Speculos fails to start in CI**
+   - Use headless mode: `--display headless`
+   - Verify binary is compiled correctly
 
-### Logs y Debugging
+### Logging and Debugging
 
-Agregar logging detallado al workflow:
+Add detailed logging to workflow:
 
 ```yaml
 - name: Debug build output
@@ -216,17 +216,17 @@ Agregar logging detallado al workflow:
     file applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet
 ```
 
-## Recursos Adicionales
+## Additional Resources
 
-- [Repositorio ledger-app-builder](https://github.com/LedgerHQ/ledger-app-builder)
-- [Documentación de Ragger](https://github.com/LedgerHQ/ragger)
-- [Documentación de Speculos](https://github.com/LedgerHQ/speculos)
+- [ledger-app-builder repository](https://github.com/LedgerHQ/ledger-app-builder)
+- [Ragger documentation](https://github.com/LedgerHQ/ragger)
+- [Speculos documentation](https://github.com/LedgerHQ/speculos)
 
-## Conclusión
+## Conclusion
 
-La integración CI actual ya está bien configurada usando la imagen Docker oficial de Ledger. Las principales mejoras propuestas son:
-1. Agregar testing automatizado con Ragger
-2. Actualizar a la última versión de la imagen Docker
-3. Mejorar el troubleshooting y logging
+The current CI integration is well configured using Ledger's official Docker image. The main proposed improvements are:
+1. Add automated testing with Ragger
+2. Update to the latest Docker image version
+3. Improve troubleshooting and logging
 
-El framework de testing está listo para ser integrado en la pipeline de CI existente.
+The testing framework is ready to be integrated into the existing CI pipeline.
