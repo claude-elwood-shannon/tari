@@ -51,13 +51,37 @@ cargo ledger setup
 
 Before running tests, compile the Tari Ledger Wallet application:
 
+### Primary Compilation Method (✅ Verified Working)
+
 ```bash
 cd applications/minotari_ledger_wallet/wallet
-cargo ledger build flex
+LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk cargo ledger build nanosplus
 ```
 
 This will generate the application binary at:
-`applications/minotari_ledger_wallet/wallet/target/flex/release/minotari_ledger_wallet`
+`applications/minotari_ledger_wallet/wallet/target/nanosplus/release/minotari_ledger_wallet`
+
+### Alternative Device Support
+
+**Note on Device Compatibility**: The current SDK configuration may not support "flex" directly due to version incompatibilities. Use "nanosplus" as the primary target:
+
+```bash
+# ✅ Working: nanosplus device
+LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk cargo ledger build nanosplus
+
+# ❌ May fail: flex device (SDK version incompatibility)
+LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk cargo ledger build flex
+```
+
+### Required Environment Variable
+
+**Important**: Always set the `LEDGER_SDK_PATH` environment variable pointing to the Ledger Secure SDK:
+
+```bash
+export LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk
+# or use inline:
+LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk cargo ledger build nanosplus
+```
 
 ## Running Tests
 
@@ -90,22 +114,23 @@ GetVersion response (decoded): '5.1.0-rc.1'
 The `test_tari_ragger.py` file uses Ledger's official Ragger testing framework and has been verified to work correctly:
 
 ```bash
-# ✅ Verified working command for Ledger Flex device
-python3 -m pytest tests/ledger_wallet/test_tari_ragger.py --device flex -v
+# ✅ Verified working command for Ledger Nano S Plus device
+python3 -m pytest tests/ledger_wallet/test_tari_ragger.py --device nanosp -v
 ```
 
 **Expected Output:**
 ```
-============================================ test session starts =============================================
-collected 5 items
+======================= test session starts ========================
+collected 6 items
 
-tests/ledger_wallet/test_tari_ragger.py::test_tari_app_launch[flex] PASSED                             [ 20%]
-tests/ledger_wallet/test_tari_ragger.py::test_get_app_name[flex] PASSED                                [ 40%]
-tests/ledger_wallet/test_tari_ragger.py::test_get_version[flex] PASSED                                 [ 60%]
-tests/ledger_wallet/test_tari_ragger.py::test_multiple_commands[flex] PASSED                           [ 80%]
-tests/ledger_wallet/test_tari_ragger.py::test_speculos_only[flex] PASSED                               [100%]
+test_tari_ragger.py::test_tari_app_launch[nanosp] PASSED     [ 16%]
+test_tari_ragger.py::test_get_app_name[nanosp] PASSED        [ 33%]
+test_tari_ragger.py::test_get_version[nanosp] PASSED         [ 50%]
+test_tari_ragger.py::test_get_public_spend_key[nanosp] PASSED [ 66%]
+test_tari_ragger.py::test_multiple_commands[nanosp] PASSED   [ 83%]
+test_tari_ragger.py::test_speculos_only[nanosp] PASSED       [100%]
 
-============================================= 5 passed in 5.29s ==============================================
+======================== 6 passed in 4.90s =========================
 ```
 
 **Ragger Features (✅ Verified):**
@@ -125,8 +150,10 @@ The `ledger_app.toml` manifest file is required for Ragger:
 [app]
 sdk = "rust"
 build_directory = "applications/minotari_ledger_wallet/wallet"
-devices = ["flex"]
+devices = ["nanosp"]
 ```
+
+**Important Note**: The device name in the manifest (`nanosp`) must match the device used for compilation (`nanosplus` in cargo ledger, `nanosp` in Ragger).
 
 ### Experimental Script
 
@@ -180,19 +207,24 @@ speculos: Api level detected from metadata: 24
 ### Common Issues
 
 1. **Application Not Found**
-   - Ensure the application is compiled: `cargo ledger build flex`
-   - Verify the binary exists at the expected path
+   - Ensure the application is compiled: `LEDGER_SDK_PATH=/data/git/tari/ledger-secure-sdk cargo ledger build nanosplus`
+   - Verify the binary exists at the expected path: `applications/minotari_ledger_wallet/wallet/target/nanosplus/release/minotari_ledger_wallet`
 
 2. **Speculos Import Errors**
    - Install Ragger with Speculos support: `pip install 'ragger[speculos]'`
    - Ensure Speculos is properly installed
 
 3. **Ragger Parameter Requirements**
-   - **Required parameter**: Always include `--device flex` when running Ragger tests
-   - **Correct command**: `python3 -m pytest tests/ledger_wallet/test_tari_ragger.py --device flex -v`
+   - **Required parameter**: Always include `--device nanosp` when running Ragger tests
+   - **Correct command**: `python3 -m pytest tests/ledger_wallet/test_tari_ragger.py --device nanosp -v`
    - **Error without device**: `pytest: error: the following arguments are required: --device`
 
-4. **Session Persistence Issues**
+4. **Device Compatibility Issues**
+   - **Flex device not working**: Use `nanosplus` for compilation and `nanosp` for testing
+   - **SDK version mismatch**: Ensure `LEDGER_SDK_PATH` is set correctly to `/data/git/tari/ledger-secure-sdk`
+   - **Manifest mismatch**: Update `ledger_app.toml` to use `devices = ["nanosp"]`
+
+5. **Session Persistence Issues**
    - The framework uses persistent sessions by default
    - Check that ports 5000 and 5001 are available
 
@@ -228,13 +260,13 @@ The `ledger_app.toml` file is required for Ragger testing and follows the ledger
 [app]
 sdk = "rust"
 build_directory = "applications/minotari_ledger_wallet/wallet"
-devices = ["flex"]
+devices = ["nanosp"]
 ```
 
 **Manifest Parameters:**
 - **`sdk`**: Must be "rust" or "c" (lowercase)
 - **`build_directory`**: Path to the directory containing Cargo.toml (not the target directory)
-- **`devices`**: List of supported Ledger devices (e.g., ["flex", "stax", "nanos"])
+- **`devices`**: List of supported Ledger devices (e.g., ["nanosp", "stax", "nanos"])
 
 **Important Notes:**
 - **Location Requirement**: The manifest file MUST be located in the project root directory (`/data/git/tari/ledger_app.toml`)
@@ -242,6 +274,7 @@ devices = ["flex"]
 - The build_directory should point to the directory containing Cargo.toml, not the target directory
 - Ragger will automatically find the compiled binary in the target subdirectory
 - The manifest format is defined by the ledgered library
+- **Device Compatibility**: The device name in the manifest must match the device used for compilation (`nanosp` in Ragger corresponds to `nanosplus` in cargo ledger)
 
 ### Git Configuration
 
