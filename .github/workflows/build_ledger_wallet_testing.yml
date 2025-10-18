@@ -104,25 +104,25 @@ jobs:
           echo "Compute files shasum"
           while IFS= read -r file; do
             if [ -f "$file" ]; then
-              ${SHARUN} "$file" >> "${{ env.BINFILE }}.sha256"
+              ${SHARUN} "$file" >> "${BINFILE}.sha256"
             fi
           done < files_to_checksum.txt
           
           echo "Show the shasum"
-          cat "${{ env.BINFILE }}.sha256"
+          cat "${BINFILE}.sha256"
           echo "Checksum verification for files is "
-          ${SHARUN} --check "${{ env.BINFILE }}.sha256"
+          ${SHARUN} --check "${BINFILE}.sha256"
           
           # Create zip with only the files we have
           echo "Creating archive"
-          7z a "${{ env.BINFILE }}.zip" @files_to_checksum.txt
+          7z a "${BINFILE}.zip" @files_to_checksum.txt
           
           echo "Compute archive shasum"
-          ${SHARUN} "${{ env.BINFILE }}.zip" >> "${{ env.BINFILE }}.zip.sha256"
+          ${SHARUN} "${BINFILE}.zip" >> "${BINFILE}.zip.sha256"
           echo "Show the shasum"
-          cat "${{ env.BINFILE }}.zip.sha256"
+          cat "${BINFILE}.zip.sha256"
           echo "Checksum verification archive is "
-          ${SHARUN} --check "${{ env.BINFILE }}.zip.sha256"
+          ${SHARUN} --check "${BINFILE}.zip.sha256"
 
       - name: Artifact upload for ${{ matrix.ledger_target }}
         uses: actions/upload-artifact@v4
