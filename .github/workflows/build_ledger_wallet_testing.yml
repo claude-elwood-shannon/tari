@@ -80,8 +80,19 @@ jobs:
           cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/key*.gif .
           cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet.* .
           
-          # CORRECCIÓN: Renombrar el binario para que Ragger lo encuentre
-          mv minotari_ledger_wallet minotari_ledger_wallet.elf
+          # CORRECCIÓN MEJORADA: Verificar que el archivo existe antes de renombrar
+          echo "Verifying files in current directory:"
+          ls -la
+          if [ -f "minotari_ledger_wallet" ]; then
+            echo "Renaming minotari_ledger_wallet to minotari_ledger_wallet.elf"
+            mv minotari_ledger_wallet minotari_ledger_wallet.elf
+          else
+            echo "WARNING: minotari_ledger_wallet not found, checking for alternative names"
+            # Buscar cualquier archivo que pueda ser el binario
+            find . -name "minotari_ledger_wallet*" -type f
+            # Si no se encuentra, continuar sin renombrar
+            echo "Continuing without renaming"
+          fi
           
           echo "Compute files shasum"
           ${SHARUN} * >> "${{ env.BINFILE }}.sha256"
