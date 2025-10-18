@@ -11,7 +11,7 @@ pytest-html>=3.0.0
 pytest-xdist>=3.0.0
 
 # Additional utilities
-ledgered>=1.0.0
+ledgered>=0.12.0
 structlog>=21.0.0
 
 # Development tools (optional)
