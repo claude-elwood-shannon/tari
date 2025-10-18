@@ -137,7 +137,7 @@ jobs:
     needs: [ builds ]
     strategy:
       fail-fast: false
-      matrix:
+        matrix:
         include:
           - ledger_target: nanosplus
             speculos_model: nanosplus
@@ -183,9 +183,10 @@ jobs:
         shell: bash
         run: |
           cd tests/ledger_wallet
+          # Set the application path for Ragger using environment variable
+          export RAGGER_APP=minotari_ledger_wallet.elf
           python -m pytest test_tari_ragger.py -v \
             --device ${{ matrix.speculos_model }} \
-            --app-file ../minotari_ledger_wallet.elf \
             --log-level INFO
 
       - name: Upload test results
