@@ -81,6 +81,8 @@ jobs:
           cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/*.json .
           cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/key*.gif .
           cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet.* .
+          # Also copy the ELF binary without extension (Ragger needs this)
+          cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet .
           
           # FIX: Check what files were actually copied and handle missing binary
           echo "Verifying files in current directory:"
@@ -165,7 +167,7 @@ jobs:
           unzip -o "${{ env.TS_FILENAME }}-${{ matrix.ledger_target }}"*.zip
           # Create the directory structure that Ragger expects
           mkdir -p applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/
-          # Copy the extracted .elf file to the expected location (Ragger works with ELF binaries)
+          # Copy the extracted ELF file to the expected location (Ragger needs ELF binaries)
           cp -f minotari_ledger_wallet.elf applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet
           ls -la
           echo "Ragger application path: applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet"
