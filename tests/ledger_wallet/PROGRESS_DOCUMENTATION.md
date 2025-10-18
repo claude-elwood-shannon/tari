@@ -4,7 +4,7 @@
 
 Start by using the MCP GitHub tools to check the status of the latest execution of .github/workflows/build_ledger_wallet_testing.yml in CI.
 
-1.- If all tests (including Ragger) of that workflow have worked correctly for each device version of the Ledger wallet app, ONLY IN THAT CASE YOU WILL HAVE FINISHED and you should inform me about it.
+1.- If all tests (including Ragger) of that workflow have worked correctly for each device version of the Ledger wallet app, ONLY IN THAT CASE YOU WILL HAVE FINISHED YOUR COMPLETE WORK OF HAVE ALL TESTS RUNNING OK, and you should inform me about it.
 2.- If you find any type of error, analyze it, diagnose it, and fix it, always in the local workspace. The local simulator, although it only works for two devices, can serve as a guide.
 3.- The name of the current working branch will trigger the execution of a workflow for each push you make, so make commit and push (remote origin-claude), and ensure you don't trigger more than one workflow execution to avoid interfering with your monitoring.
 4.- Again with the MCP GitHub tools, monitor the execution, PAY ATTENTION COMPLETELY, of the workflow. As soon as something fails you can stop monitoring and focus on the first error you detect, but if you don't find errors you must wait for the workflow execution to complete to ensure there are no errors.
@@ -58,11 +58,18 @@ Start by using the MCP GitHub tools to check the status of the latest execution 
 
 ## Pending Issues
 
-### 🔄 Issue 1: Ragger+Speculos tests in execution
+### 🔄 Issue 1: YAML indentation error fixed
+- **Status**: ✅ RESOLVED
+- **Security tag**: `yaml-fix-20251018-100115`
+- **Date/Time**: 18/10/2025, 10:01:15
+- **Description**: Fixed YAML indentation error in workflow matrix configuration
+- **Action required**: Monitor results of workflow #24
+
+### 🔄 Issue 2: Ragger+Speculos tests in execution
 - **Status**: In execution
 - **Affected devices**: All (nanox, nanosplus, flex, stax)
-- **Description**: Ragger tests are being executed with the --device parameter fix
-- **Action required**: Monitor results of workflow #20
+- **Description**: Ragger tests are being executed with corrected YAML configuration
+- **Action required**: Monitor results of workflow #24
 
 ## Next Steps
 
