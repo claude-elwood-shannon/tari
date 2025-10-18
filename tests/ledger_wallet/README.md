@@ -12,7 +12,7 @@ This directory contains the testing framework for the Minotari Ledger Wallet app
 ### Single Command Execution
 
 ```bash
-cd /data/git/tari
+cd /path/to/tari
 ./tests/ledger_wallet/ci_simulation/simulate_ci_podman.sh
 ```
 
@@ -225,7 +225,7 @@ devices = ["flex", "nanosp"]
 - **`devices`**: List of supported Ledger devices (e.g., ["flex", "nanosp", "stax", "nanos"])
 
 **Important Notes:**
-- **Location Requirement**: The manifest file MUST be located in the project root directory (`/data/git/tari/ledger_app.toml`)
+- **Location Requirement**: The manifest file MUST be located in the project root directory (`/path/to/tari/ledger_app.toml`)
 - Ragger automatically searches for `project_root_dir / "ledger_app.toml"`
 - The build_directory should point to the directory containing Cargo.toml, not the target directory
 - Ragger will automatically find the compiled binary in the target subdirectory
