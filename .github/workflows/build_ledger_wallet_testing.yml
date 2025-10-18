@@ -80,7 +80,7 @@ jobs:
           cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/key*.gif .
           cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet.* .
           
-          # CORRECCIÓN MEJORADA: Verificar que el archivo existe antes de renombrar
+          # FINAL FIX: Change to dist directory before renaming
           echo "Verifying files in current directory:"
           ls -la
           if [ -f "minotari_ledger_wallet" ]; then
@@ -88,9 +88,9 @@ jobs:
             mv minotari_ledger_wallet minotari_ledger_wallet.elf
           else
             echo "WARNING: minotari_ledger_wallet not found, checking for alternative names"
-            # Buscar cualquier archivo que pueda ser el binario
+            # Search for any file that could be the binary
             find . -name "minotari_ledger_wallet*" -type f
-            # Si no se encuentra, continuar sin renombrar
+            # If not found, continue without renaming
             echo "Continuing without renaming"
           fi
           
