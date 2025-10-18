@@ -80,27 +80,43 @@ jobs:
           cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/key*.gif .
           cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet.* .
           
-          # FINAL FIX: Change to dist directory before renaming
+          # FIX: Check what files were actually copied and handle missing binary
           echo "Verifying files in current directory:"
           ls -la
+          
+          # Check if minotari_ledger_wallet binary exists
           if [ -f "minotari_ledger_wallet" ]; then
-            echo "Renaming minotari_ledger_wallet to minotari_ledger_wallet.elf"
+            echo "Binary minotari_ledger_wallet found, renaming to .elf"
             mv minotari_ledger_wallet minotari_ledger_wallet.elf
           else
-            echo "WARNING: minotari_ledger_wallet not found, checking for alternative names"
-            # Search for any file that could be the binary
+            echo "WARNING: minotari_ledger_wallet binary not found"
+            echo "Available files:"
             find . -name "minotari_ledger_wallet*" -type f
-            # If not found, continue without renaming
-            echo "Continuing without renaming"
+            echo "Continuing with available files"
           fi
           
+          # Create list of files to include in checksum
+          echo "Creating file list for checksum calculation"
+          find . -maxdepth 1 -type f -name "minotari_ledger_wallet*" -o -name "*.json" -o -name "key*.gif" > files_to_checksum.txt
+          echo "Files to checksum:"
+          cat files_to_checksum.txt
+          
           echo "Compute files shasum"
-          ${SHARUN} * >> "${{ env.BINFILE }}.sha256"
+          while IFS= read -r file; do
+            if [ -f "$file" ]; then
+              ${SHARUN} "$file" >> "${{ env.BINFILE }}.sha256"
+            fi
+          done < files_to_checksum.txt
+          
           echo "Show the shasum"
           cat "${{ env.BINFILE }}.sha256"
           echo "Checksum verification for files is "
           ${SHARUN} --check "${{ env.BINFILE }}.sha256"
-          7z a "${{ env.BINFILE }}.zip" *
+          
+          # Create zip with only the files we have
+          echo "Creating archive"
+          7z a "${{ env.BINFILE }}.zip" @files_to_checksum.txt
+          
           echo "Compute archive shasum"
           ${SHARUN} "${{ env.BINFILE }}.zip" >> "${{ env.BINFILE }}.zip.sha256"
           echo "Show the shasum"
