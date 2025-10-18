@@ -2,7 +2,7 @@
 # This file contains all required packages for running Ragger tests
 
 # Core testing framework
-ragger>=3.0.0
+ragger>=1.40.0
 speculos>=2.0.0
 
 # Testing dependencies
