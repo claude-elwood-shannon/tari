@@ -182,6 +182,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r tests/ledger_wallet/requirements.txt
 
+      - name: Install QEMU for ARM emulation
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user-static
+
       - name: Install Speculos
         run: |
           pip install speculos
