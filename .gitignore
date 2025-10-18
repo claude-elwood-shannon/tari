@@ -76,6 +76,8 @@ integration_tests/log/
 # Ignore MinoTari Ledger Wallet
 app_nanosplus.json
 app_nanos.json
+dist/
+tests/ledger_wallet/dist/
 
 Dockerfile
 docker-compose.yml

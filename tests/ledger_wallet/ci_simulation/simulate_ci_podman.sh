@@ -6,10 +6,10 @@
 set -e  # Exit on any error
 
 # Configuration
-LEDGER_TARGET="${1:-nanosplus}"  # Default to nanosplus
-SPECULOS_MODEL="${2:-nanosplus}"
+LEDGER_TARGET="${1:-nanosplus}"  # Default to nanosplus (Ledger builder)
+SPECULOS_MODEL="${2:-nanosp}"    # Default to nanosp (Speculos)
 WORKSPACE_DIR="$(pwd)"
-DIST_DIR="${WORKSPACE_DIR}/dist"
+DIST_DIR="${WORKSPACE_DIR}/tests/ledger_wallet/dist"
 TEST_RESULTS_DIR="${WORKSPACE_DIR}/tests/ledger_wallet/test_results"
 LOG_DIR="${WORKSPACE_DIR}/tests/ledger_wallet/logs"
 
@@ -75,12 +75,12 @@ log "Step 3: Starting Speculos emulator for ${SPECULOS_MODEL}"
 podman stop speculos-${SPECULOS_MODEL} 2>/dev/null || true
 podman rm speculos-${SPECULOS_MODEL} 2>/dev/null || true
 
-# Start Speculos
+# Start Speculos (headless mode for CI environment)
 podman run -d --name "speculos-${SPECULOS_MODEL}" \
     -p 9999:9999 \
     -v "${WORKSPACE_DIR}/applications/minotari_ledger_wallet/wallet/target/${LEDGER_TARGET}/release:/app" \
     ghcr.io/ledgerhq/speculos:latest \
-    --model "${SPECULOS_MODEL}" /app/minotari_ledger_wallet.elf
+    --model "${SPECULOS_MODEL}" --display headless /app/minotari_ledger_wallet
 
 # Wait for Speculos to start
 sleep 5
@@ -98,19 +98,17 @@ log "Step 4: Running Ragger tests against Speculos"
 
 cd "${WORKSPACE_DIR}/tests/ledger_wallet"
 
-# Set environment variables for tests
+# Set environment variables for tests (Ragger uses these automatically)
 export SPECULOS_MODEL="${SPECULOS_MODEL}"
-export APP_FILE="../minotari_ledger_wallet.elf"
+export APP_FILE="../minotari_ledger_wallet"
 export SPECULOS_HOST="localhost"
 export SPECULOS_PORT="9999"
 
-# Run tests with detailed output
+# Run tests with detailed output (Ragger handles Speculos configuration automatically)
 python -m pytest test_tari_ragger.py -v \
-    --speculos-model "${SPECULOS_MODEL}" \
-    --app-file "${APP_FILE}" \
+    --device "${SPECULOS_MODEL}" \
     --log-level INFO \
     --junitxml="${TEST_RESULTS_DIR}/test-results-${SPECULOS_MODEL}.xml" \
-    --html="${TEST_RESULTS_DIR}/test-report-${SPECULOS_MODEL}.html" \
     2>&1 | tee "${LOG_DIR}/test-execution-${SPECULOS_MODEL}.log"
 
 TEST_EXIT_CODE=${PIPESTATUS[0]}
@@ -143,7 +141,6 @@ fi
 echo "" >> "${TEST_RESULTS_DIR}/summary-${SPECULOS_MODEL}.md"
 echo "**Generated Files:**" >> "${TEST_RESULTS_DIR}/summary-${SPECULOS_MODEL}.md"
 echo "- Test Results: test-results-${SPECULOS_MODEL}.xml" >> "${TEST_RESULTS_DIR}/summary-${SPECULOS_MODEL}.md"
-echo "- HTML Report: test-report-${SPECULOS_MODEL}.html" >> "${TEST_RESULTS_DIR}/summary-${SPECULOS_MODEL}.md"
 echo "- Execution Log: test-execution-${SPECULOS_MODEL}.log" >> "${TEST_RESULTS_DIR}/summary-${SPECULOS_MODEL}.md"
 
 cat "${TEST_RESULTS_DIR}/summary-${SPECULOS_MODEL}.md"
