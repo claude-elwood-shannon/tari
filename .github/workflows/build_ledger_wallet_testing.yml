@@ -165,10 +165,10 @@ jobs:
           unzip -o "${{ env.TS_FILENAME }}-${{ matrix.ledger_target }}"*.zip
           # Create the directory structure that Ragger expects
           mkdir -p applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/
-          # Copy the extracted .hex file to the expected location (Ragger works with .hex files)
-          cp -f minotari_ledger_wallet.hex applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet.hex
+          # Copy the extracted .elf file to the expected location (Ragger works with ELF binaries)
+          cp -f minotari_ledger_wallet.elf applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet
           ls -la
-          echo "Ragger application path: applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet.hex"
+          echo "Ragger application path: applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet"
 
       - name: Set up Python
         uses: actions/setup-python@v5
