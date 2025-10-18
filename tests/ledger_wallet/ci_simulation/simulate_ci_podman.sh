@@ -8,7 +8,7 @@ set -e  # Exit on any error
 # Configuration
 LEDGER_TARGET="${1:-nanosplus}"  # Default to nanosplus (Ledger builder)
 SPECULOS_MODEL="${2:-nanosp}"    # Default to nanosp (Speculos)
-WORKSPACE_DIR="$(pwd)"
+WORKSPACE_DIR="/data/git/tari"
 DIST_DIR="${WORKSPACE_DIR}/tests/ledger_wallet/dist"
 TEST_RESULTS_DIR="${WORKSPACE_DIR}/tests/ledger_wallet/test_results"
 LOG_DIR="${WORKSPACE_DIR}/tests/ledger_wallet/logs"
