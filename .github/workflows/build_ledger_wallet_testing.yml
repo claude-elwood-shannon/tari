@@ -66,7 +66,9 @@ jobs:
           SHA_SHORT: ${GITHUB_SHA::7}
         shell: bash
         run: |
-          BINFILE="${TS_FILENAME}-${{ matrix.ledger_target }}-${{ github.ref_name }}-${{ env.SHA_SHORT }}"
+          # Replace invalid characters in branch name for filename
+          BRANCH_NAME_CLEAN=$(echo "${{ github.ref_name }}" | sed 's/[\/]/_/g')
+          BINFILE="${TS_FILENAME}-${{ matrix.ledger_target }}-${BRANCH_NAME_CLEAN}-${{ env.SHA_SHORT }}"
           echo "BINFILE=${BINFILE}" >> $GITHUB_ENV
 
       - name: archive ledger firmware for ${{ matrix.ledger_target }}
