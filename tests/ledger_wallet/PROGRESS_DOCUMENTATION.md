@@ -7,9 +7,10 @@ Start by using the MCP GitHub tools to check the status of the latest execution 
 1.- If all tests (including Ragger) of that workflow have worked correctly for each device version of the Ledger wallet app, ONLY IN THAT CASE YOU WILL HAVE FINISHED YOUR COMPLETE WORK OF HAVE ALL TESTS RUNNING OK, and you should inform me about it.
 2.- If you find any type of error, analyze it, diagnose it, and fix it, always in the local workspace. The local simulator, although it only works for two devices, can serve as a guide.
 3.- The name of the current working branch will trigger the execution of a workflow for each push you make, so make commit and push (remote origin-claude), and ensure you don't trigger more than one workflow execution to avoid interfering with your monitoring.
-4.- Again with the MCP GitHub tools, monitor the execution, PAY ATTENTION COMPLETELY, of the workflow. As soon as something fails you can stop monitoring and focus on the first error you detect, but if you don't find errors you must wait for the workflow execution to complete to ensure there are no errors.
-5.- If you discover that the error you are trying to fix has been solved, document it in this same file, and then create a security tag (with timestamp), because you will continue making corrections and this will allow you to have a restoration point that you should use if something goes wrong and you need to restore your developments.
-6.- Go to point 1 again and continue the cycle.
+4.- **EXPLICIT PROHIBITION**: DO NOT MANUALLY EXECUTE THE WORKFLOW USING MCP GITHUB TOOLS. The push already triggers automatic execution. Manual execution creates duplicate runs that interfere with monitoring.
+5.- Again with the MCP GitHub tools, monitor the execution, PAY ATTENTION COMPLETELY, of the workflow. As soon as something fails you can stop monitoring and focus on the first error you detect, but if you don't find errors you must wait for the workflow execution to complete to ensure there are no errors.
+6.- If you discover that the error you are trying to fix has been solved, document it in this same file, and then create a security tag (with timestamp), because you will continue making corrections and this will allow you to have a restoration point that you should use if something goes wrong and you need to restore your developments.
+7.- Go to point 1 again and continue the cycle.
 
 ## Documented Achievements
 
@@ -65,11 +66,45 @@ Start by using the MCP GitHub tools to check the status of the latest execution 
 - **Description**: Fixed YAML indentation error in workflow matrix configuration
 - **Action required**: Monitor results of workflow #24
 
+### ✅ Achievement 6: Device name correction (nanosplus → nanosp)
+- **Security tag**: `device-name-fix-20251018-100652`
+- **Date/Time**: 18/10/2025, 10:06:52
+- **Description**: Fixed invalid device name "nanosplus" to "nanosp" for Ragger compatibility
+- **Status**: Completed
+- **Details**: 
+  - **Problem identified**: Error "argument --device: invalid choice: 'nanosplus'"
+  - **Solution**: Changed all occurrences of "nanosplus" to "nanosp" in workflow matrix
+  - **Workflows executed**: #25 (failed due to device name mismatch)
+
+### ✅ Achievement 7: Device name mismatch resolution (build vs test)
+- **Security tag**: `device-mismatch-fix-20251018-101126`
+- **Date/Time**: 18/10/2025, 10:11:26
+- **Description**: Fixed device name mismatch between build and test sections
+- **Status**: Completed
+- **Details**: 
+  - **Problem identified**: Build section used "nanosplus" but test section expected "nanosp" artifact
+  - **Solution**: 
+    - Build section: use "nanosplus" for cargo ledger build (generates correct artifact name)
+    - Test section: use "nanosplus" for ledger_target but "nanosp" for speculos_model
+  - **Workflows executed**: #26 (in progress)
+
+### ✅ Achievement 8: Ragger application path configuration fix
+- **Security tag**: `ragger-path-fix-20251018-101926`
+- **Date/Time**: 18/10/2025, 10:19:26
+- **Description**: Fixed Ragger application path configuration by copying binary to expected location and using --application parameter
+- **Status**: Completed
+- **Details**: 
+  - **Problem identified**: Ragger couldn't find application at expected path
+  - **Solution**: 
+    - Copy extracted binary to `applications/minotari_ledger_wallet/wallet/target/{device}/release/minotari_ledger_wallet`
+    - Use `--application` parameter with full path in pytest command
+  - **Workflows executed**: #27 (in progress)
+
 ### 🔄 Issue 2: Ragger+Speculos tests in execution
 - **Status**: In execution
-- **Affected devices**: All (nanox, nanosplus, flex, stax)
-- **Description**: Ragger tests are being executed with corrected YAML configuration
-- **Action required**: Monitor results of workflow #24
+- **Affected devices**: All (nanosplus/nanosp, nanox, flex, stax)
+- **Description**: Workflow #27 executing with corrected Ragger application path configuration
+- **Action required**: Monitor results of workflow #27
 
 ## Next Steps
 
