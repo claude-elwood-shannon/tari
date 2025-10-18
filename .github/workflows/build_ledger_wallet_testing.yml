@@ -34,7 +34,7 @@ jobs:
         include:
           - ledger_target: nanox
             best_effort: true
-          - ledger_target: nanosplus
+          - ledger_target: nanosp
           - ledger_target: flex
             best_effort: true
           - ledger_target: stax
@@ -139,8 +139,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - ledger_target: nanosplus
-            speculos_model: nanosplus
+          - ledger_target: nanosp
+            speculos_model: nanosp
           - ledger_target: nanox
             speculos_model: nanox
           - ledger_target: stax
