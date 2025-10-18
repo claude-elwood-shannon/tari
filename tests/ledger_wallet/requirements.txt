@@ -3,7 +3,7 @@
 
 # Core testing framework
 ragger>=1.40.0
-speculos>=2.0.0
+speculos>=0.25.0
 
 # Testing dependencies
 pytest>=7.0.0
