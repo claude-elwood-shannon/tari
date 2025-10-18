@@ -112,6 +112,8 @@ jobs:
             speculos_model: nanox
           - ledger_target: stax
             speculos_model: stax
+          - ledger_target: flex
+            speculos_model: flex
 
     runs-on: ubuntu-latest
 
