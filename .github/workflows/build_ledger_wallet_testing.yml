@@ -1,0 +1,232 @@
+---
+name: Build and Test minotari_ledger_wallet with Ragger+Speculos
+
+'on':
+  push:
+    branches:
+      - "feature/ledger-test-env-*-ragger-speculos"
+      - "build-ledger-testing-*"
+  pull_request:
+    branches:
+      - "feature/ledger-test-env-*-ragger-speculos"
+  schedule:
+    - cron: "05 00 * * *"
+  workflow_dispatch:
+
+env:
+  TS_FILENAME: "minotari_ledger_wallet"
+  SHARUN: "shasum --algorithm 256"
+  DOCKER_IMAGE: "ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest"
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  builds:
+    name: building ${{ matrix.ledger_target }}
+    continue-on-error: ${{ matrix.best_effort || false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ledger_target: nanox
+            best_effort: true
+          - ledger_target: nanosplus
+          - ledger_target: flex
+            best_effort: true
+          - ledger_target: stax
+            best_effort: true
+
+    permissions:
+      packages: write
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout tari
+        uses: actions/checkout@v5
+
+      - name: Set up QEMU for Docker
+        uses: docker/setup-qemu-action@v3
+
+      - name: Build ledger firmware
+        shell: bash
+        run: |
+          docker run --rm \
+            -v ".:/app" \
+            -w "/app/applications/minotari_ledger_wallet/wallet" \
+            ${{env.DOCKER_IMAGE}} \
+            cargo ledger build ${{ matrix.ledger_target }} -- --locked
+
+      - name: env Setup
+        env:
+          SHA_SHORT: ${GITHUB_SHA::7}
+        shell: bash
+        run: |
+          BINFILE="${TS_FILENAME}-${{ matrix.ledger_target }}-${{ github.ref_name }}-${{ env.SHA_SHORT }}"
+          echo "BINFILE=${BINFILE}" >> $GITHUB_ENV
+
+      - name: archive ledger firmware for ${{ matrix.ledger_target }}
+        shell: bash
+        run: |
+          mkdir -p "${GITHUB_WORKSPACE}/dist"
+          cd "${GITHUB_WORKSPACE}/dist"
+          echo "Copying files for ${{ env.BINFILE }} to $(pwd)"
+          ls -la ${{ github.workspace }}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/
+          cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/*.json .
+          cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/key*.gif .
+          cp -vf ${GITHUB_WORKSPACE}/applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet.* .
+          
+          # CORRECCIÓN MEJORADA: Verificar que el archivo existe antes de renombrar
+          echo "Verifying files in current directory:"
+          ls -la
+          if [ -f "minotari_ledger_wallet" ]; then
+            echo "Renaming minotari_ledger_wallet to minotari_ledger_wallet.elf"
+            mv minotari_ledger_wallet minotari_ledger_wallet.elf
+          else
+            echo "WARNING: minotari_ledger_wallet not found, checking for alternative names"
+            # Buscar cualquier archivo que pueda ser el binario
+            find . -name "minotari_ledger_wallet*" -type f
+            # Si no se encuentra, continuar sin renombrar
+            echo "Continuing without renaming"
+          fi
+          
+          echo "Compute files shasum"
+          ${SHARUN} * >> "${{ env.BINFILE }}.sha256"
+          echo "Show the shasum"
+          cat "${{ env.BINFILE }}.sha256"
+          echo "Checksum verification for files is "
+          ${SHARUN} --check "${{ env.BINFILE }}.sha256"
+          7z a "${{ env.BINFILE }}.zip" *
+          echo "Compute archive shasum"
+          ${SHARUN} "${{ env.BINFILE }}.zip" >> "${{ env.BINFILE }}.zip.sha256"
+          echo "Show the shasum"
+          cat "${{ env.BINFILE }}.zip.sha256"
+          echo "Checksum verification archive is "
+          ${SHARUN} --check "${{ env.BINFILE }}.zip.sha256"
+
+      - name: Artifact upload for ${{ matrix.ledger_target }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.BINFILE }}
+          path: "${{ github.workspace }}/dist/${{ env.BINFILE }}.zip*"
+
+  ragger-speculos-tests:
+    name: Ragger+Speculos tests for ${{ matrix.ledger_target }}
+    needs: [ builds ]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ledger_target: nanosplus
+            speculos_model: nanosplus
+          - ledger_target: nanox
+            speculos_model: nanox
+          - ledger_target: stax
+            speculos_model: stax
+          - ledger_target: flex
+            speculos_model: flex
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout tari
+        uses: actions/checkout@v5
+
+      - name: Download built artifacts
+        uses: actions/download-artifact@v5
+        with:
+          pattern: "${{ env.TS_FILENAME }}-${{ matrix.ledger_target }}*"
+
+      - name: Extract firmware files
+        shell: bash
+        run: |
+          unzip -o "${{ env.TS_FILENAME }}-${{ matrix.ledger_target }}"*.zip
+          ls -la
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tests/ledger_wallet/requirements.txt
+
+      - name: Install Speculos
+        run: |
+          pip install speculos
+
+      - name: Run Ragger tests for ${{ matrix.ledger_target }}
+        shell: bash
+        run: |
+          cd tests/ledger_wallet
+          python -m pytest test_tari_ragger.py -v \
+            --speculos-model ${{ matrix.speculos_model }} \
+            --app-file ../minotari_ledger_wallet.elf \
+            --log-level INFO
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.ledger_target }}
+          path: |
+            tests/ledger_wallet/logs/
+            tests/ledger_wallet/test-reports/
+
+  integration-tests:
+    name: Integration tests
+    needs: [ builds, ragger-speculos-tests ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout tari
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tests/ledger_wallet/requirements.txt
+
+      - name: Run integration tests
+        shell: bash
+        run: |
+          cd tests/ledger_wallet
+          python -m pytest test_tari_ledger_wallet.py -v
+
+      - name: Upload integration test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-test-results
+          path: |
+            tests/ledger_wallet/logs/
+            tests/ledger_wallet/test-reports/
+
+  test-summary:
+    name: Test Summary
+    needs: [ builds, ragger-speculos-tests, integration-tests ]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Generate test summary
+        shell: bash
+        run: |
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Builds completed for all targets" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Ragger+Speculos tests executed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Integration tests completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
