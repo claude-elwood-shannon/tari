@@ -1,118 +1,118 @@
-# Progreso de Simulación de CI - Resumen Completo
+# CI Simulation Progress - Complete Summary
 
-## Fecha: 18 de Octubre 2025
-## Estado: ✅ COMPLETADO EXITOSAMENTE
+## Date: October 18, 2025
+## Status: ✅ SUCCESSFULLY COMPLETED
 
-## Resumen Ejecutivo
+## Executive Summary
 
-Se ha completado exitosamente la implementación de un sistema de simulación de CI para el proyecto Tari Ledger Wallet. El sistema permite ejecutar localmente el flujo completo de CI que normalmente se ejecutaría en GitHub Actions.
+The implementation of a CI simulation system for the Tari Ledger Wallet project has been successfully completed. The system allows local execution of the complete CI workflow that would normally run on GitHub Actions.
 
-## Logros Principales
+## Main Achievements
 
-### 1. Script de Simulación Funcional
-- **Archivo:** `simulate_ci_podman.sh`
-- **Funcionalidad:** Simula el workflow completo de CI usando Podman
-- **Resultado:** 6/6 tests pasados exitosamente
+### 1. Functional Simulation Script
+- **File:** `simulate_ci_podman.sh`
+- **Functionality:** Simulates the complete CI workflow using Podman
+- **Result:** 6/6 tests passed successfully
 
-### 2. Configuración de Entorno Optimizada
-- **Imágenes Docker:** Ledger App Builder y Speculos configuradas
-- **Modo Headless:** Speculos funciona sin interfaz gráfica
-- **Integración Ragger:** Tests automatizados con framework oficial de Ledger
+### 2. Optimized Environment Configuration
+- **Docker Images:** Ledger App Builder and Speculos configured
+- **Headless Mode:** Speculos works without graphical interface
+- **Ragger Integration:** Automated tests with Ledger's official framework
 
-### 3. Correcciones Implementadas
+### 3. Implemented Fixes
 
-#### Problemas Resueltos:
-1. **Speculos Headless:** Configurado modo sin PyQt6 para entornos CI
-2. **Nombre de Archivo ELF:** Corregido de `.elf` a sin extensión
-3. **Parámetros Ragger:** Simplificados para usar solo `--device`
-4. **Ubicación de Archivos:** Carpeta `dist` movida a ubicación apropiada
+#### Problems Resolved:
+1. **Speculos Headless:** Configured mode without PyQt6 for CI environments
+2. **ELF Filename:** Corrected from `.elf` to no extension
+3. **Ragger Parameters:** Simplified to use only `--device`
+4. **File Locations:** `dist` folder moved to appropriate location
 
-#### Cambios Técnicos:
-- Script actualizado para usar `--display headless`
-- Corrección de ruta del archivo ELF: `minotari_ledger_wallet` (sin .elf)
-- Parámetros Ragger simplificados: solo `--device nanosp`
-- Carpeta `dist` movida a `tests/ledger_wallet/dist/`
+#### Technical Changes:
+- Script updated to use `--display headless`
+- ELF file path correction: `minotari_ledger_wallet` (no .elf extension)
+- Ragger parameters simplified: only `--device nanosp`
+- `dist` folder moved to `tests/ledger_wallet/dist/`
 
-### 4. Configuración Git Ignore
+### 4. Git Ignore Configuration
 ```
-# Agregado al .gitignore
+# Added to .gitignore
 dist/
 tests/ledger_wallet/dist/
 ```
 
-## Flujo de Trabajo Implementado
+## Implemented Workflow
 
-### Paso 1: Compilación del Firmware
+### Step 1: Firmware Compilation
 ```bash
-# Usa Ledger App Builder oficial
+# Uses official Ledger App Builder
 podman run --rm -v "${WORKSPACE_DIR}:/app" \
     ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest \
     cargo ledger build "${LEDGER_TARGET}" -- --locked
 ```
 
-**Resultado:** Firmware compilado exitosamente para Ledger Nano S Plus
+**Result:** Firmware compiled successfully for Ledger Nano S Plus
 
-### Paso 2: Archivo de Firmware
-- **Ubicación:** `tests/ledger_wallet/dist/`
-- **Archivos generados:**
-  - `minotari_ledger_wallet` (binario ELF, 291KB)
-  - `minotari_ledger_wallet.apdu` (archivo de instalación)
-  - `app_nanosplus.json` (metadatos)
-  - Checksums SHA256
+### Step 2: Firmware Archive
+- **Location:** `tests/ledger_wallet/dist/`
+- **Generated files:**
+  - `minotari_ledger_wallet` (ELF binary, 291KB)
+  - `minotari_ledger_wallet.apdu` (installation file)
+  - `app_nanosplus.json` (metadata)
+  - SHA256 checksums
 
-### Paso 3: Emulación con Speculos
+### Step 3: Speculos Emulation
 ```bash
-# Speculos en modo headless
+# Speculos in headless mode
 podman run -d --name "speculos-${SPECULOS_MODEL}" \
     -p 9999:9999 \
     --model "${SPECULOS_MODEL}" --display headless /app/minotari_ledger_wallet
 ```
 
-### Paso 4: Testing con Ragger
+### Step 4: Ragger Testing
 ```bash
-# Tests automatizados usando Ragger
+# Automated tests using Ragger
 python -m pytest test_tari_ragger.py -v --device nanosp
 ```
 
-**Tests Ejecutados:**
-1. `test_tari_app_launch` - ✅ Aplicación lanzada
-2. `test_get_app_name` - ✅ Comando GetAppName
-3. `test_get_version` - ✅ Comando GetVersion  
-4. `test_get_public_spend_key` - ✅ Clave pública generada
-5. `test_multiple_commands` - ✅ Secuencia de comandos
-6. `test_speculos_only` - ✅ Funcionalidad Speculos
+**Tests Executed:**
+1. `test_tari_app_launch` - ✅ Application launched
+2. `test_get_app_name` - ✅ GetAppName command
+3. `test_get_version` - ✅ GetVersion command
+4. `test_get_public_spend_key` - ✅ Public key generated
+5. `test_multiple_commands` - ✅ Command sequence
+6. `test_speculos_only` - ✅ Speculos functionality
 
-## Resultados de Performance
+## Performance Results
 
-### Ejecución 1 (Inicial):
-- **Tiempo:** 5.29 segundos
-- **Tests:** 6/6 pasados
+### Execution 1 (Initial):
+- **Time:** 5.29 seconds
+- **Tests:** 6/6 passed
 
-### Ejecución 2 (Verificación):
-- **Tiempo:** 4.49 segundos (mejorado)
-- **Tests:** 6/6 pasados
+### Execution 2 (Verification):
+- **Time:** 4.49 seconds (improved)
+- **Tests:** 6/6 passed
 
-## Archivos Modificados
+## Modified Files
 
-### 1. Script Principal
+### 1. Main Script
 - `tests/ledger_wallet/ci_simulation/simulate_ci_podman.sh`
-- **Cambios:** Ubicación de `dist`, parámetros Ragger, modo headless
+- **Changes:** `dist` location, Ragger parameters, headless mode
 
-### 2. Configuración Git
+### 2. Git Configuration
 - `.gitignore`
-- **Agregado:** `dist/` y `tests/ledger_wallet/dist/`
+- **Added:** `dist/` and `tests/ledger_wallet/dist/`
 
-### 3. Documentación
-- `tests/ledger_wallet/ci_simulation/README.md` (existente)
-- `tests/ledger_wallet/ci_simulation/PROGRESS_SUMMARY.md` (nuevo)
+### 3. Documentation
+- `tests/ledger_wallet/ci_simulation/README.md` (existing)
+- `tests/ledger_wallet/ci_simulation/PROGRESS_SUMMARY.md` (new)
 
-## Próximos Pasos Recomendados
+## Recommended Next Steps
 
-1. **Integración con GitHub Actions:** Usar el script en workflows reales
-2. **Testing Multi-dispositivo:** Extender a Nano X y otros modelos
-3. **CI/CD Pipeline:** Automatizar builds y tests en cada commit
-4. **Documentación:** Actualizar guías de desarrollo
+1. **GitHub Actions Integration:** Use the script in real workflows
+2. **Multi-device Testing:** Extend to Nano X and other models
+3. **CI/CD Pipeline:** Automate builds and tests on each commit
+4. **Documentation:** Update development guides
 
-## Conclusión
+## Conclusion
 
-El sistema de simulación de CI está completamente funcional y listo para uso en desarrollo. Permite a los desarrolladores probar localmente el flujo completo de CI antes de enviar cambios al repositorio, mejorando la calidad y reduciendo errores en los pipelines de integración continua.
+The CI simulation system is fully functional and ready for development use. It allows developers to test the complete CI workflow locally before submitting changes to the repository, improving quality and reducing errors in continuous integration pipelines.

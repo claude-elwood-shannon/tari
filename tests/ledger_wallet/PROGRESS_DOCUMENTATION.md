@@ -57,15 +57,6 @@ Start by using the MCP GitHub tools to check the status of the latest execution 
   - **Solution**: Added `--device speculos` to pytest command
   - **Workflows executed**: #19 (cancelled) and #20 (pending)
 
-## Pending Issues
-
-### 🔄 Issue 1: YAML indentation error fixed
-- **Status**: ✅ RESOLVED
-- **Security tag**: `yaml-fix-20251018-100115`
-- **Date/Time**: 18/10/2025, 10:01:15
-- **Description**: Fixed YAML indentation error in workflow matrix configuration
-- **Action required**: Monitor results of workflow #24
-
 ### ✅ Achievement 6: Device name correction (nanosplus → nanosp)
 - **Security tag**: `device-name-fix-20251018-100652`
 - **Date/Time**: 18/10/2025, 10:06:52
@@ -100,19 +91,39 @@ Start by using the MCP GitHub tools to check the status of the latest execution 
     - Use `--application` parameter with full path in pytest command
   - **Workflows executed**: #27 (in progress)
 
-### 🔄 Issue 2: Ragger+Speculos tests in execution
-- **Status**: In execution
-- **Affected devices**: All (nanosplus/nanosp, nanox, flex, stax)
-- **Description**: Workflow #27 executing with corrected Ragger application path configuration
-- **Action required**: Monitor results of workflow #27
+### ✅ Achievement 9: Workflow #37 complete analysis and Speculos compatibility issue identified
+- **Security tag**: `speculos-compatibility-issue-20251018-111501`
+- **Date/Time**: 18/10/2025, 11:15:01
+- **Description**: Complete analysis of workflow #37 execution with Speculos compatibility issues identified
+- **Status**: Completed
+- **Details**: 
+  - **Workflow #37 Status**: Completed with failure
+  - **Build jobs**: All successful (nanox, nanosplus, flex, stax) ✅
+  - **Test jobs**: 
+    - nanox: ✅ Success
+    - stax: ✅ Success
+    - flex: ❌ Failed (Speculos connection refused)
+    - nanosplus: ❌ Failed (Speculos connection refused)
+  - **Root cause**: Speculos cannot start for flex and nanosp models
+  - **Error details**: `Connection refused` on port 5000, Speculos not accepting connections
+  - **Next steps**: Investigate Speculos compatibility with these specific models
+
+## Current Issues
+
+### 🔄 Issue 1: Speculos compatibility with flex and nanosp models
+- **Status**: Active investigation
+- **Affected devices**: flex, nanosp (nanosplus)
+- **Description**: Speculos fails to start for these specific models, preventing Ragger tests
+- **Action required**: Investigate Speculos model compatibility and configuration requirements
 
 ## Next Steps
 
-1. Analyze Ragger test error logs
-2. Identify root cause of failure
-3. Implement necessary fixes
-4. Execute workflow again
-5. Verify that tests pass successfully
+1. Investigate Speculos compatibility with flex and nanosp models
+2. Check if specific configuration or versions are required
+3. Test locally with podman simulator if possible
+4. Implement necessary fixes
+5. Execute workflow again
+6. Verify that all tests pass successfully
 
 ## Git Tags Created
 

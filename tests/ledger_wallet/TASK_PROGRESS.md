@@ -23,10 +23,10 @@ Look at the default rust boiler plate app as an example."
 
 ### Git-Bug Command for Reference
 ```bash
-# Comando para consultar esta issue específica
+# Command to query this specific issue
 git-bug bug show c0e6928
 
-# Comando para listar todas las issues
+# Command to list all issues
 git-bug bug list
 ```
 
