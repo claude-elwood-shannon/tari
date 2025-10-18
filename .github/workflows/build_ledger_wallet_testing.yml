@@ -184,8 +184,7 @@ jobs:
         run: |
           cd tests/ledger_wallet
           python -m pytest test_tari_ragger.py -v \
-            --device speculos \
-            --speculos-model ${{ matrix.speculos_model }} \
+            --device ${{ matrix.speculos_model }} \
             --app-file ../minotari_ledger_wallet.elf \
             --log-level INFO
 
