@@ -188,10 +188,9 @@ jobs:
         shell: bash
         run: |
           cd tests/ledger_wallet
-          # Use the full application path that Ragger expects (now with .hex extension)
+          # Ragger automatically finds the application in the standard location
           python -m pytest test_tari_ragger.py -v \
             --device ${{ matrix.speculos_model }} \
-            --application ../applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet.hex \
             --log-level INFO
 
       - name: Upload test results
