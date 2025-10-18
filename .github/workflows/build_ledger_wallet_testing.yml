@@ -137,7 +137,7 @@ jobs:
     needs: [ builds ]
     strategy:
       fail-fast: false
-        matrix:
+      matrix:
         include:
           - ledger_target: nanosplus
             speculos_model: nanosplus
