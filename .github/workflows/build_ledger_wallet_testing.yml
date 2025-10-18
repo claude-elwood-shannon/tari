@@ -165,10 +165,10 @@ jobs:
           unzip -o "${{ env.TS_FILENAME }}-${{ matrix.ledger_target }}"*.zip
           # Create the directory structure that Ragger expects
           mkdir -p applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/
-          # Copy the extracted binary to the expected location
-          cp -f minotari_ledger_wallet applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet
+          # Copy the extracted .hex file to the expected location (Ragger works with .hex files)
+          cp -f minotari_ledger_wallet.hex applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet.hex
           ls -la
-          echo "Ragger application path: applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet"
+          echo "Ragger application path: applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet.hex"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -188,10 +188,10 @@ jobs:
         shell: bash
         run: |
           cd tests/ledger_wallet
-          # Use the full application path that Ragger expects
+          # Use the full application path that Ragger expects (now with .hex extension)
           python -m pytest test_tari_ragger.py -v \
             --device ${{ matrix.speculos_model }} \
-            --application ../applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet \
+            --application ../applications/minotari_ledger_wallet/wallet/target/${{ matrix.ledger_target }}/release/minotari_ledger_wallet.hex \
             --log-level INFO
 
       - name: Upload test results
