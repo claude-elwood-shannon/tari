@@ -1,0 +1,23 @@
+# Python dependencies for Tari Ledger Wallet testing
+# This file contains all required packages for running Ragger tests
+
+# Core testing framework
+ragger>=1.40.0
+speculos>=0.25.0
+
+# Testing dependencies
+pytest>=7.0.0
+pytest-html>=3.0.0
+pytest-xdist>=3.0.0
+
+# Additional utilities
+ledgered>=0.12.0
+structlog>=21.0.0
+
+# Development tools (optional)
+black>=22.0.0
+flake8>=4.0.0
+mypy>=0.900
+
+# Note: These dependencies are also specified in the workflow files
+# and should be kept in sync with the CI configuration

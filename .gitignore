@@ -73,10 +73,35 @@ integration_tests/cucumber-output-junit.xml
 
 integration_tests/log/
 
-# Ignore MinoTari Ledger Wallet
+# ==============================================================================
+# CI Simulation for Ledger Wallet Testing
+# ==============================================================================
+# These entries are specifically for the CI simulation system
+# They should be reviewed before creating a PR to ensure they're appropriate
+
+# Build artifacts and distribution files
+dist/
+tests/ledger_wallet/dist/
+
+# Test results and logs from CI simulation
+tests/ledger_wallet/test_results/
+tests/ledger_wallet/logs/
+
+# Individual Ledger app files (generated during build)
 app_nanosplus.json
 app_nanos.json
 
 Dockerfile
 docker-compose.yml
 entrypoint.sh
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cloned repositories for development (should not be versioned)
+ledger-secure-sdk/
+speculos/
+ledgered/
+ledger-app-builder/
