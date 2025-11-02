@@ -51,6 +51,7 @@ cargo install ledgerctl
 4. Ensure the device is detected by your system
 
 ### Install the Application
+Execute this command from the same directory where you built the application (the wallet directory):
 ```bash
 ledgerctl install target/flex/release/app_flex.json
 ```
