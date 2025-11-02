@@ -47,7 +47,7 @@ cargo install ledgerctl
 ### Connect Your Device
 1. Connect your Ledger Flex device to your computer via USB
 2. Unlock the device using your PIN
-3. **Important**: The device does NOT need to be in recovery mode - standard unlocked mode works perfectly
+3. **Important**: The device must NOT be in recovery mode - standard unlocked mode is required
 4. Ensure the device is detected by your system
 
 ### Install the Application
