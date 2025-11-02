@@ -1,40 +1,66 @@
 # MinoTari Wallet Installation Guide for Ledger Flex
 
 ## Overview
-This guide provides step-by-step instructions for installing the MinoTari Wallet application on your Ledger Flex device.
+This guide provides complete instructions for building and installing the MinoTari Wallet application on your Ledger Flex device.
 
 ## Prerequisites
 - Ledger Flex device with up-to-date firmware
 - USB connection to your computer
 - `ledgerctl` tool installed on your system
+- Rust toolchain and Ledger development environment
 
-## Installation Steps
+## Step 1: Build the Application
 
-### Step 1: Connect Your Ledger Flex
-1. Connect your Ledger Flex device to your computer via USB
-2. Unlock the device using your PIN
-3. Ensure the device is detected by your system
+### Prerequisites for Building
+Ensure you have the necessary development tools:
+```bash
+# Install Rust toolchain
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source ~/.cargo/env
 
-### Step 2: Install the Application
+# Install Ledger development tools
+cargo install ledgerctl
+```
+
+### Build Process
 1. Navigate to the Tari project directory:
    ```bash
    cd applications/minotari_ledger_wallet/wallet
    ```
 
-2. Install the MinoTari Wallet application:
+2. Build the application for Ledger Flex:
    ```bash
-   ledgerctl install target/flex/release/app_flex.json
+   cargo ledger build --target flex --release
    ```
 
-### Step 3: Verify Installation
-1. Check that the application is installed:
+3. Verify the build output:
    ```bash
-   ledgerctl list
+   ls target/flex/release/
    ```
+   You should see:
+   - `app_flex.json` - Installation file
+   - `minotari_ledger_wallet.hex` - Compiled binary
+   - `key_40x40.gif` - Device icon
 
-2. You should see "MinoTari Wallet" in the list of installed applications
+## Step 2: Install on Ledger Flex
 
-## Using the MinoTari Wallet
+### Connect Your Device
+1. Connect your Ledger Flex device to your computer via USB
+2. Unlock the device using your PIN
+3. Ensure the device is detected by your system
+
+### Install the Application
+```bash
+ledgerctl install target/flex/release/app_flex.json
+```
+
+### Verify Installation
+```bash
+ledgerctl list
+```
+You should see "MinoTari Wallet" in the list of installed applications.
+
+## Step 3: Using the MinoTari Wallet
 
 ### Starting the Application
 1. On your Ledger Flex device, navigate to the "MinoTari Wallet" application
@@ -46,7 +72,11 @@ This guide provides step-by-step instructions for installing the MinoTari Wallet
 
 ## Troubleshooting
 
-### Common Issues
+### Build Issues
+- **Missing dependencies**: Ensure all Ledger development tools are installed
+- **Build errors**: Check Rust toolchain version and Ledger SDK compatibility
+
+### Installation Issues
 - **Application not starting**: Ensure you manually start the application on the device
 - **Connection problems**: Verify USB connection and device is unlocked
 - **Firmware issues**: Update your Ledger Flex firmware using Ledger Live
