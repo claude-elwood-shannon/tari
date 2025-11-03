@@ -5,6 +5,12 @@
 
 **Proposed solution**: Change `address_interactive` to `address_one_sided` in `app_state.rs`.
 
+**Issue Status Verification (2025-04-11)**: 
+- Searched git-bug repository for existing issues related to "QR code Ledger Flex connectivity"
+- No specific issue found for this exact problem
+- Related issues found: ledger test env (c0e6928), Ledger wallet hang state (3e29d1e)
+- This appears to be a previously unreported issue
+
 ## Action Plan for Tomorrow
 
 ### Phase 1: QR Code Generation for Testing (15-30 min)
