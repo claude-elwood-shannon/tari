@@ -80,3 +80,10 @@ app_nanos.json
 Dockerfile
 docker-compose.yml
 entrypoint.sh
+
+# Ignore ledger-related directories
+ledger-app-builder/
+ledger-secure-sdk/
+ledgered/
+speculos/
+tests/
